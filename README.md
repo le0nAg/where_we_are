@@ -5,3 +5,4 @@ TODO list:
 TO ASK list:
 - best auth method for our solution
 - nel pitch immagini del frontend figma a
+- discordanza standard scrittura user stories
