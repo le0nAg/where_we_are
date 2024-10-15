@@ -1,4 +1,5 @@
 TODO list:
+- front end design
 - user flow
 - api paths (meta lang, no implementation)
 
