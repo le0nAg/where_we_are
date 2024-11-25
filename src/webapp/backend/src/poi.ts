@@ -7,7 +7,7 @@ poi: {
     street: ?,
     image: string,
     name: string,
-    
+    description: string,    
 }
 
 */
