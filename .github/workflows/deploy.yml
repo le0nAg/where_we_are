@@ -1,0 +1,49 @@
+name: Deploy Webapp
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout il codice sorgente
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # 2. Installazione di Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    # 3. Installare le dipendenze
+    - name: Install dependencies
+      run: npm install
+      working-directory: src/webapp/backend
+
+    # 4. Build della webapp (se necessario)
+    - name: Build the webapp
+      run: npm run build
+      working-directory: src/webapp/backend
+
+    # 5. Deployment sul server remoto
+    - name: Deploy to server
+      env:
+        HOST: ${{ secrets.SERVER_HOST }}
+        USER: ${{ secrets.SERVER_USER }}
+        PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      run: |
+        echo "$PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+        ssh -i private_key.pem $USER@$HOST "
+          cd /path/to/webapp &&
+          git pull origin develop &&
+          npm install &&
+          npm run build &&
+          pm2 restart all"
+        rm -f private_key.pem
+
