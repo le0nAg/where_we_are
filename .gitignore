@@ -1,5 +1,7 @@
 ./src/webapp/backend/node_modules/
 node_modules/
+dist/
+/dist
 # Logs
 logs
 *.log
