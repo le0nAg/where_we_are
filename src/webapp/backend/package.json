@@ -4,6 +4,7 @@
   "description": "Backend of the webapp for application management",
   "main": "index.js",
   "scripts": {
+    "clean": "rimraf dist",
     "start": "npx ts-node src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
