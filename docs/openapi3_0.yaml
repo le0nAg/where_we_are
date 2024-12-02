@@ -1,0 +1,420 @@
+openapi: 3.0.3
+info:
+  title: where we are webapp api
+  description: 
+    "
+    This is the API for the webapp of the WhereWeAre project.
+    //TODO add some more
+    "
+  license:
+    name: GPL 3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+  version: 0.0.1
+externalDocs:
+  description: Find out more about WhereWeAre
+  url: https://github.com/le0nAg/where_we_are/
+
+tags:
+  - name: operator
+    description: operations about operator
+
+  - name: poi
+    description: operations about point of interest
+
+  - name: event
+    description: operations about event
+  
+
+paths:
+  /operator:
+    post:
+      tags:
+        - operator
+      summary: Create an operator
+      description: This can only be done by devs for now.
+      operationId: createOperator
+      requestBody:
+        description: Created operator object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Operator'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Operator'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Operator'
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operator'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Operator'
+  /operator/createWithList:
+    post:
+      tags:
+        - operator
+      summary: Creates list of operators with given input array
+      description: Creates list of operators with given input array
+      operationId: createOperatorsWithListInput
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Operator'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operator'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Operator'
+        default:
+          description: successful operation
+  /operator/login:
+    post:
+      tags:
+        - operator
+      summary: Logs operator into the system
+      description: ''
+      operationId: loginOperator
+      parameters:
+        - name: username
+          in: query
+          description: The operator name for login
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Invalid username/password supplied
+  /operator/logout:
+    get:
+      tags:
+        - operator
+      summary: Logs out current logged in operator session
+      description: ''
+      operationId: logoutOperator
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+
+  /operator/{operatorId}:
+    get:
+      tags:
+        - operator
+      summary: Retrieve an operator by ID
+      description: Get the details of an operator using their ID.
+      operationId: getOperatorById
+      parameters:
+        - name: operatorId
+          in: path
+          required: true
+          description: ID of the operator
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Operator retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operator'
+        '404':
+          description: Operator not found
+
+    put:
+      tags:
+        - operator
+      summary: Update an operator
+      description: Update operator information by ID.
+      operationId: updateOperator
+      parameters:
+        - name: operatorId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Updated operator object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Operator'
+      responses:
+        '200':
+          description: Operator updated successfully
+        '404':
+          description: Operator not found
+
+  /poi:
+    post:
+      tags:
+        - poi
+      summary: Create a new Point of Interest
+      description: Add a new POI to the database.
+      operationId: createPoi
+      requestBody:
+        description: POI object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Poi'
+      responses:
+        '201':
+          description: POI created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poi'
+        '400':
+          description: Invalid input data
+
+  /poi/{poiId}:
+    get:
+      tags:
+        - poi
+      summary: Retrieve a specific POI
+      description: Get details of a POI by its ID.
+      operationId: getPoiById
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          description: ID of the POI
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: POI retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poi'
+        '404':
+          description: POI not found
+
+    patch:
+      tags:
+        - poi
+      summary: Update a POI
+      description: Update specific fields of a POI.
+      operationId: updatePoi
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          description: ID of the POI to update
+          schema:
+            type: integer
+      requestBody:
+        description: POI object with updated data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Poi'
+      responses:
+        '200':
+          description: POI updated successfully
+        '404':
+          description: POI not found
+        '400':
+          description: Invalid input data
+
+    delete:
+      tags:
+        - poi
+      summary: Delete a POI
+      description: Remove a POI by its ID.
+      operationId: deletePoi
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          description: ID of the POI to delete
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: POI deleted successfully
+        '404':
+          description: POI not found
+
+  /event:
+    post:
+      tags:
+        - event
+      summary: Create a new event
+      description: Add a new event to the database.
+      operationId: createEvent
+      requestBody:
+        description: Event object to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '201':
+          description: Event created successfully
+        '400':
+          description: Invalid input data
+
+  /event/{eventId}:
+    get:
+      tags:
+        - event
+      summary: Retrieve an event by ID
+      description: Get details of an event by its ID.
+      operationId: getEventById
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Event retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: Event not found
+
+    patch:
+      tags:
+        - event
+      summary: Update an event
+      description: Update specific fields of an event.
+      operationId: updateEvent
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Event object with updated data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '200':
+          description: Event updated successfully
+        '404':
+          description: Event not found
+
+    delete:
+      tags:
+        - event
+      summary: Delete an event
+      description: Remove an event by its ID.
+      operationId: deleteEvent
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Event deleted successfully
+        '404':
+          description: Event not found
+
+components:
+  schemas:
+    Operator:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    Poi:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        position:
+          type: object
+          properties:
+            latitude:
+              type: number
+            longitude:
+              type: number
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        startingTime:
+          type: string
+          format: date-time
+        endingTime:
+          type: string
+          format: date-time
+        organizers:
+          type: array
+          items:
+            type: integer
+        position:
+          type: object
+          properties:
+            latitude:
+              type: number
+            longitude:
+              type: number
