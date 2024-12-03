@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import poiRoutes from './poi'; // Importa il file delle route
 
 dotenv.config({
    path: __dirname+'/env/config.env',
@@ -21,6 +22,9 @@ app.use(express.json());
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from TypeScript backend!');
 });
+
+// Route per i punti di interesse
+app.use('/api/poi', poiRoutes); // Collegamento alle route
 
 // Start server
 app.listen(PORT, () => {
