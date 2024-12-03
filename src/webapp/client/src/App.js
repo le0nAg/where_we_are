@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import MapPage from "./pages/MapPage";
+import PoiManagement from "./pages/PoiManagement";
 import "./App.css";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/map" element={<MapPage />} />
+            <Route path="/poi-management" element={<PoiManagement />}/>
             <Route path="/settings" element={<Settings />} />
           </Routes>
         </div>

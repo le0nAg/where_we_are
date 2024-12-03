@@ -66,3 +66,24 @@ form button {
 form button:hover {
   background-color: #0056b3;
 }
+
+.page ul {
+  list-style: none;
+  padding: 0;
+}
+
+.page ul li {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.page ul li button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.page ul li button:hover {
+  opacity: 0.8;
+}
