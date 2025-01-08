@@ -30,3 +30,4 @@ app.use('/api/poi', poiRoutes); // Collegamento alle route
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
