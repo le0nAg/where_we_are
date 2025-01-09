@@ -26,6 +26,7 @@ module.exports.Signup = async (req, res, next) => {
 
 
 module.exports.Login = async (req, res, next) => {
+  //console.log(req.body);
   try {
     const { email, password } = req.body;
     if(!email || !password ){
@@ -33,11 +34,11 @@ module.exports.Login = async (req, res, next) => {
     }
     const user = await User.findOne({ email });
     if(!user){
-      return res.json({message:'Incorrect password or email' }) 
+      return res.status(401).json({message:'Incorrect password or email' }) 
     }
     const auth = await bcrypt.compare(password,user.password)
     if (!auth) {
-      return res.json({message:'Incorrect password or email' }) 
+      return res.status(401).json({message:'Incorrect password or email' }) 
     }
      const token = createSecretToken(user._id);
      res.cookie("token", token, {

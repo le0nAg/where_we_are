@@ -6,7 +6,7 @@ const app = express();
 require("dotenv").config({path: path.join(__dirname, "env/config.env")});
 const cookieParser = require("cookie-parser");
 const authRoute = require("./routes/authnRoute");
-const { ATLAS_URI, PORT } = process.env;
+const { ATLAS_URI, SERVER_PORT, CLIENT_PORT } = process.env;
 
 mongoose
   .connect(ATLAS_URI, {
@@ -16,13 +16,13 @@ mongoose
   .then(() => console.log("MongoDB is  connected successfully"))
   .catch((err) => console.error(err));
 
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+app.listen(SERVER_PORT, () => {
+  console.log(`Server is listening on port ${SERVER_PORT}`);
 });
 
 app.use(
   cors({
-    origin: [`http://localhost:${PORT}`],
+    origin: [`http://localhost:${CLIENT_PORT}`],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
