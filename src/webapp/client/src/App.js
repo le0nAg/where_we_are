@@ -6,26 +6,22 @@ import Settings from "./pages/Settings";
 import MapPage from "./pages/MapPage";
 import Login from "./pages/authn/Login";
 import HomeSample from "./pages/authn/HomeSample";
+import AuthProvider from "./context/AuthProvider";
+import PrivateRoute from "./components/PrivateRoute";
 import "./App.css";
 
 function App() {
   return (
-    <Router>
-      <div className="app">
-        <Sidebar />
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/home" element={<HomeSample />} />
-            
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/map" element={<MapPage />} />
-            <Route path="/settings" element={<Settings />} />
+    <div className="App">
+      <AuthProvider>
+      <Routes>
             <Route path="/login" element={<Login />} />
+            <Route element={<PrivateRoute />}>
+              <Route path="/home" element={<HomeSample />} />
+            </Route>
           </Routes>
-        </div>
-      </div>
-    </Router>
+      </AuthProvider>
+    </div>
   );
 }
 

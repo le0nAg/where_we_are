@@ -3,16 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
-export {default as Login} from './pages/authn/Login';
+import { BrowserRouter } from 'react-router-dom';
+//export {default as Login} from './pages/authn/Login';
 //export {default as Signup} from './authn/Signup'; not exposed by design
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <BrowserRouter>
+      <App />
+  </BrowserRouter>
+  ,
+  document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function
