@@ -34,11 +34,11 @@ module.exports.Login = async (req, res, next) => {
     }
     const user = await User.findOne({ email });
     if(!user){
-      return res.status(401).json({message:'Incorrect password or email' }) 
+      return res.status(401).json({message:'User not found' }) 
     }
     const auth = await bcrypt.compare(password,user.password)
     if (!auth) {
-      return res.status(401).json({message:'Incorrect password or email' }) 
+      return res.status(401).json({message:'Incorrect password' }) 
     }
      const token = createSecretToken(user._id);
      res.cookie("token", token, {
