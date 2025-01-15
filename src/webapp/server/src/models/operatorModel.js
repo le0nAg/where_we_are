@@ -22,7 +22,7 @@ const operatorSchema = new mongoose.Schema({
 });
 
 operatorSchema.pre("save", async function () {
-  this.password = await argon2.hash(this.password, 12);
+  this.password = await argon2.hash(this.password);
 });
 
 module.exports = mongoose.model("Operator", operatorSchema);
