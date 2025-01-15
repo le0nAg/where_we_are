@@ -7,7 +7,6 @@ const Sidebar = () => {
       <h2>Gestionale</h2>
       <nav>
         <ul>
-          <li><Link to="/">Dashboard</Link></li>
           <li><Link to="/map">Mappa</Link></li>
           <li><Link to="/settings">Impostazioni</Link></li>
         </ul>

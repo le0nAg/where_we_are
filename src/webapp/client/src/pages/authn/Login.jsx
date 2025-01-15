@@ -1,92 +1,32 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { useState } from "react";
+import { useLogin } from "../../hooks/useLogin";
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState({
-    email: "",
-    password: "",
-  });
-  const { email, password } = inputValue;
-  const handleOnChange = (e) => {
-    const { name, value } = e.target;
-    setInputValue({
-      ...inputValue,
-      [name]: value,
-    });
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleError = (err) =>
-    toast.error(err, {
-      position: "bottom-left",
-    });
-  const handleSuccess = (msg) =>
-    toast.success(msg, {
-      position: "bottom-left",
-    });
+  const { login, error, isLoading } = useLogin();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const { data } = await axios.post(
-        "http://localhost:5000/login",
-        {
-          ...inputValue,
-        },
-        { withCredentials: true }
-      );
-      console.log(data);
-      const { success, message } = data;
-      if (success) {
-        handleSuccess(message);
-        setTimeout(() => {
-          navigate("/home");
-        }, 1000);
-      } else {
-        handleError(message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    setInputValue({
-      ...inputValue,
-      email: "",
-      password: "",
-    });
-  };
+    
+    await login(email, password);
+  }
 
   return (
-    <div className="form_container">
-      <h2>Login Account</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={email}
-            placeholder="Enter your email"
-            onChange={handleOnChange} // Handle input change for email
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={password}
-            placeholder="Enter your password"
-            onChange={handleOnChange}
-          />
-        </div>
-        <button type="submit"> Login </button>
-      </form>
-      <ToastContainer />
-    </div>
+    <form className="login" onSubmit={handleSubmit}>
+      <h3>login</h3>
+      <label>email</label>
+      <input type='email' onChange={(e) => setEmail(e.target.value)} value={email}></input>
+      
+      <h3>password</h3>
+      <label>password</label>
+      <input type='password' onChange={(e) => setPassword(e.target.value)} value={password}></input>
+      
+      <button disabled={isLoading}> login </button>
+      {error && <div className="error">{error}</div>}
+    </form>
   );
 };
 
-export default Login;
+export default Login

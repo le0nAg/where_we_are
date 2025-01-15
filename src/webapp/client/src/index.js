@@ -3,16 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
+import {  AuthProvider } from './context/AuthnContext';
 //export {default as Login} from './pages/authn/Login';
 //export {default as Signup} from './authn/Signup'; not exposed by design
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <BrowserRouter>
+  <React.StrictMode>
+    <AuthProvider>  
       <App />
-  </BrowserRouter>
+    </AuthProvider>
+  </React.StrictMode>
   ,
   document.getElementById('root')
 );
