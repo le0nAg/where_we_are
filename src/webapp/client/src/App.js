@@ -1,23 +1,30 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, BrowserRouter } from "react-router-dom";
-import Sidebar from "./components/Sidebar";
-import Dashboard from "./pages/Dashboard";
-import Settings from "./pages/Settings";
+import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
 import MapPage from "./pages/MapPage";
 import Login from "./pages/authn/Login";
-import HomeSample from "./pages/authn/HomeSample";
-import AuthProvider from "./context/AuthnContext";
 import "./App.css";
+import { useAuthnContext } from "./hooks/useAuthnContext";
+import Protected from "./pages/Protected";
 
 function App() {
+  const { user } = useAuthnContext();
+
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          
-          <Route path="/" element={<HomeSample />} />
+          {user ? (
+            <>
+              <Route path="/map" element={<MapPage />} />
+              <Route path="/dashboard" element={<Protected />} />
+              <Route path="*" element={<Navigate to="/map" />} />
+            </>
+          ) : (
+            <>
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </>
+          )}
         </Routes>
       </BrowserRouter>
     </div>
