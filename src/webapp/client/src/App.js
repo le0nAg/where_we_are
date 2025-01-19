@@ -1,35 +1,41 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
+import MapPage from "./pages/MapPage";
+import PoiManagement from "./pages/PoiManagement";
+import Login from "./pages/authn/Login";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
-import MapPage from "./pages/MapPage";
-import PoiManagement from "./pages/PoiManagement";
 import "./App.css";
+import { useAuthnContext } from "./hooks/useAuthnContext";
+import Protected from "./pages/Protected";
 
 function App() {
+  const { user } = useAuthnContext();
+  console.log(user);
   return (
-    <Router>
-      <div className="app">
-        <Sidebar />
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/map" element={<MapPage />} />
-            <Route path="/poi-management" element={<PoiManagement />}/>
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
+    <BrowserRouter>
+      <Router>
+        <div className="app">
+          <Sidebar />
+          <div className="content">
+            <Routes>
+            {//debugging purpose only
+            user ? 
+            console.log("usr: "+user) : console.log("no user")}
+
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/map" element={<MapPage />} />
+              <Route path="/poi-management" element={<PoiManagement />}/>
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/dashboard" element={<Protected />} />
+              <Route path="/login" element={<Login/>}></Route>
+            </Routes>
+          </div>
         </div>
-      </div>
-    </Router>
+      </Router>
+    </BrowserRouter>
   );
 }
-
-const headerStyle = {
-  backgroundColor: "#282c34",
-  color: "white",
-  padding: "1rem",
-  textAlign: "center",
-};
 
 export default App;
