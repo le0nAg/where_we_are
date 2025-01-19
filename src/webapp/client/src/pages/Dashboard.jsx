@@ -24,24 +24,47 @@ const Dashboard = () => {
     return null;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!poiName || !coordinates) {
       alert("Inserisci il nome del luogo e seleziona un punto sulla mappa.");
       return;
     }
-
-    console.log("Punto di interesse salvato:", {
+  
+    const newPoi = {
       nome: poiName,
       lat: coordinates.lat,
       lng: coordinates.lng,
-    });
-
-    setPoiName("");
-    setCoordinates(null);
-    alert("Punto di interesse aggiunto con successo!");
+    };
+  
+    try {
+      const response = await fetch("http://localhost:5050/api/poi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newPoi), // Convertiamo i dati in JSON
+      });
+  
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Risposta dal server:", result);
+  
+        // Resetta il form
+        setPoiName("");
+        setCoordinates(null);
+        alert("Punto di interesse aggiunto con successo!");
+      } else {
+        alert("Errore nel salvataggio del punto di interesse.");
+        console.error("Errore HTTP:", response.statusText);
+      }
+    } catch (error) {
+      alert("Errore di connessione al server.");
+      console.error("Errore:", error);
+    }
   };
+  
 
   return (
     <div className="dashboard">
