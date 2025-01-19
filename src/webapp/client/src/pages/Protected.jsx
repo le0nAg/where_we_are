@@ -1,11 +1,20 @@
 import React from 'react';
 
-const Protected = ({ user }) => {
+import { useAuthnContext } from '../hooks/useAuthnContext';
+import { useLogout } from '../hooks/useLogout';
+
+const Protected = () => {
+    const { user } = useAuthnContext();
+    console.log(user);
+    const { logout } = useLogout();
+
     return (
         <div>
-            <h1>User Information</h1>
-            <pre>{user ? JSON.stringify(user) : "non dovresti essere qui"}</pre>
+        <h1>Welcome, {user?.username || "User"}!</h1>
+        <p>You are successfully logged in.</p>
+        <button onClick={logout}>Logout</button>
         </div>
+    
     );
 };
 

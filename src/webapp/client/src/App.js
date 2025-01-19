@@ -8,18 +8,20 @@ import Protected from "./pages/Protected";
 
 function App() {
   const { user } = useAuthnContext();
-
+  console.log(user);
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
           {user ? (
+            console.log("usr: "+user),
             <>
-              <Route path="/map" element={<MapPage />} />
               <Route path="/dashboard" element={<Protected />} />
               <Route path="*" element={<Navigate to="/map" />} />
             </>
           ) : (
+
+            console.log("usr: "+user),
             <>
               <Route path="/login" element={<Login />} />
               <Route path="*" element={<Navigate to="/login" />} />
