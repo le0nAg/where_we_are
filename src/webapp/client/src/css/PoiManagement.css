@@ -1,0 +1,143 @@
+/* Contenitore principale */
+.poi-management {
+  display: flex;
+  height: 100vh; /* Riempi l'altezza della finestra */
+  background-color: #f9f9f9;
+}
+
+/* Lista POI */
+.poi-list {
+  width: 30%; /* Sidebar con il 30% dello schermo */
+  background: #ffffff;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  overflow-y: auto; /* Aggiungi scroll se ci sono molti POI */
+}
+
+.poi-list h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.poi-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.poi-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+}
+
+.poi-item {
+  flex: 1;
+}
+
+.poi-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.poi-actions button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #fff;
+  transition: background 0.2s ease;
+}
+
+.poi-actions button:hover {
+  opacity: 0.9;
+}
+
+.poi-actions button:nth-child(1) {
+  background-color: #007bff; /* Blu per visualizzazione */
+}
+
+.poi-actions button:nth-child(2) {
+  background-color: #ffc107; /* Giallo per modifica */
+}
+
+.poi-actions button:nth-child(3) {
+  background-color: #dc3545; /* Rosso per eliminazione */
+}
+
+/* Mappa */
+.poi-map {
+  flex: 1; /* Occupa lo spazio restante */
+  position: relative;
+}
+
+.poi-map .leaflet-container {
+  height: 100%; /* Assicurati che la mappa riempia il contenitore */
+  width: 100%;
+  z-index: 0; /* Evita che la mappa copra i popup */
+}
+
+/* Popup Modali */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 20px;
+  z-index: 10;
+  width: 90%;
+  max-width: 500px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9;
+}
+
+/* Testi nei Popup */
+.modal h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.modal input,
+.modal textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.modal button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #fff;
+  background: #28a745;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.modal button:hover {
+  background: #218838;
+}
+

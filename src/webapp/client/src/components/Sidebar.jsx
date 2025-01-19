@@ -9,6 +9,7 @@ const Sidebar = () => {
         <ul>
           <li><Link to="/">Dashboard</Link></li>
           <li><Link to="/map">Mappa</Link></li>
+          <li><Link to="/poi-management">Gestione POI</Link></li>
           <li><Link to="/settings">Impostazioni</Link></li>
         </ul>
       </nav>
