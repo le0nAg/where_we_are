@@ -15,7 +15,6 @@ function App() {
   console.log(user);
   return (
     <BrowserRouter>
-      <Router>
         <div className="app">
           <Sidebar />
           <div className="content">
@@ -33,7 +32,6 @@ function App() {
             </Routes>
           </div>
         </div>
-      </Router>
     </BrowserRouter>
   );
 }
