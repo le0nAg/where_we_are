@@ -1,136 +1,101 @@
-import React, { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import Modal from "react-modal";
-import "leaflet/dist/leaflet.css";
-import "../css/PoiManagement.css";
-
-// Configurazione marker di Leaflet
-import L from "leaflet";
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-});
-
-// Modal configurazione
-Modal.setAppElement("#root");
+import React, { useState } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import '../css/PoiManagement.css';
 
 const PoiManagement = () => {
-  // Stato iniziale
-  const [pois, setPois] = useState([
-    { id: 1, name: "Piazza Duomo", lat: 46.0704, lng: 11.1195, description: "Piazza centrale di Trento" },
-    { id: 2, name: "Muse - Museo delle Scienze", lat: 46.0675, lng: 11.1216, description: "Museo delle scienze interattivo" },
-  ]);
+  const [poiList, setPoiList] = useState([]);
+  const [isAddingPoi, setIsAddingPoi] = useState(false); // Stato per abilitare la modalità aggiunta
+  const [showAddForm, setShowAddForm] = useState(false); // Stato per mostrare il form
+  const [newPoi, setNewPoi] = useState({ name: '', description: '', coordinates: null });
+  const [selectedCoordinates, setSelectedCoordinates] = useState(null);
 
-  const [selectedPoi, setSelectedPoi] = useState(null); // Per visualizzare i dettagli
-  const [editPoi, setEditPoi] = useState(null); // Per modificare un POI
-  const [editedData, setEditedData] = useState({ name: "", description: "" });
-
-  // Funzione per eliminare un POI
-  const handleDelete = (id) => {
-    setPois(pois.filter((poi) => poi.id !== id));
+  const handleMapClick = (e) => {
+    if (isAddingPoi) {
+      const { lat, lng } = e.latlng;
+      setSelectedCoordinates({ lat, lng });
+      setShowAddForm(true);
+      setIsAddingPoi(false); // Disabilita la modalità aggiunta dopo il clic
+    }
   };
 
-  // Funzione per salvare modifiche
-  const handleEditSave = () => {
-    setPois(pois.map((poi) => (poi.id === editPoi.id ? { ...editPoi, ...editedData } : poi)));
-    setEditPoi(null); // Chiudi il popup
+  const handleAddPoi = (e) => {
+    e.preventDefault();
+    if (!newPoi.name || !newPoi.description) {
+      alert('Tutti i campi sono obbligatori!');
+      return;
+    }
+    setPoiList([...poiList, { ...newPoi, coordinates: selectedCoordinates }]);
+    setShowAddForm(false);
+    setNewPoi({ name: '', description: '', coordinates: null });
+    setSelectedCoordinates(null);
+  };
+
+  const AddPoiMarker = () => {
+    useMapEvents({
+      click: handleMapClick,
+    });
+    return selectedCoordinates ? (
+      <Marker position={[selectedCoordinates.lat, selectedCoordinates.lng]} />
+    ) : null;
   };
 
   return (
     <div className="poi-management">
-      {/* Lista POI */}
       <div className="poi-list">
         <h2>Gestione POI</h2>
         <ul>
-          {pois.map((poi) => (
-            <li key={poi.id}>
+          {poiList.map((poi, index) => (
+            <li key={index}>
               <div className="poi-item">
-                <div>
-                  <strong>{poi.name}</strong>
-                </div>
-                <div className="poi-actions">
-                  <button onClick={() => setSelectedPoi(poi)}>Visualizza</button>
-                  <button onClick={() => { setEditPoi(poi); setEditedData({ name: poi.name, description: poi.description }); }}>Modifica</button>
-                  <button onClick={() => handleDelete(poi.id)}>Elimina</button>
-                </div>
+                <strong>{poi.name}</strong>
+                <p>{poi.description}</p>
+                <p>Lat: {poi.coordinates.lat}, Lng: {poi.coordinates.lng}</p>
               </div>
             </li>
           ))}
         </ul>
+        <button className="add-poi-button" onClick={() => setIsAddingPoi(true)}>
+          Aggiungi POI
+        </button>
       </div>
-
-      {/* Mappa */}
       <div className="poi-map">
-        <MapContainer center={[46.0667, 11.1211]} zoom={13} style={{ height: "100%", width: "100%" }}>
+        <MapContainer center={[46.0661, 11.1211]} zoom={13} style={{ height: '100%', width: '100%' }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          {pois.map((poi) => (
-            <Marker key={poi.id} position={[poi.lat, poi.lng]}>
-              <Popup>{poi.name}</Popup>
-            </Marker>
-          ))}
+          <AddPoiMarker />
         </MapContainer>
       </div>
-
-      {/* Popup per visualizzazione dettagli */}
-      <Modal
-        isOpen={!!selectedPoi}
-        onRequestClose={() => setSelectedPoi(null)}
-        className="modal"
-        overlayClassName="overlay"
-      >
-        {selectedPoi && (
-          <div>
-            <h2>{selectedPoi.name}</h2>
-            <p>{selectedPoi.description}</p>
-            <button onClick={() => setSelectedPoi(null)}>Chiudi</button>
-          </div>
-        )}
-      </Modal>
-
-      {/* Popup per modifica */}
-      <Modal
-        isOpen={!!editPoi}
-        onRequestClose={() => setEditPoi(null)}
-        className="modal"
-        overlayClassName="overlay"
-      >
-        {editPoi && (
-          <div>
-            <h2>Modifica {editPoi.name}</h2>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleEditSave();
-              }}
-            >
+      {showAddForm && (
+        <div className="overlay">
+          <div className="modal">
+            <h2>Aggiungi Nuovo POI</h2>
+            <form onSubmit={handleAddPoi}>
+              <p>Coordinate selezionate: {selectedCoordinates?.lat}, {selectedCoordinates?.lng}</p>
               <label>
                 Nome:
                 <input
                   type="text"
-                  value={editedData.name}
-                  onChange={(e) => setEditedData({ ...editedData, name: e.target.value })}
+                  value={newPoi.name}
+                  onChange={(e) => setNewPoi({ ...newPoi, name: e.target.value })}
+                  required
                 />
               </label>
               <label>
                 Descrizione:
                 <textarea
-                  value={editedData.description}
-                  onChange={(e) => setEditedData({ ...editedData, description: e.target.value })}
+                  value={newPoi.description}
+                  onChange={(e) => setNewPoi({ ...newPoi, description: e.target.value })}
+                  required
                 />
               </label>
               <button type="submit">Salva</button>
-              <button type="button" onClick={() => setEditPoi(null)}>
-                Annulla
-              </button>
+              <button type="button" onClick={() => setShowAddForm(false)}>Annulla</button>
             </form>
           </div>
-        )}
-      </Modal>
+        </div>
+      )}
     </div>
   );
 };
