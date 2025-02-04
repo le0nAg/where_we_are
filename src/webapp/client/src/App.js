@@ -16,7 +16,7 @@ function App() {
   return (
     <BrowserRouter>
         <div className="app">
-          <Sidebar />
+          {/* <Sidebar /> */}
           <div className="content">
             <Routes>
             {//debugging purpose only
