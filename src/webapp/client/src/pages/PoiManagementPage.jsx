@@ -3,35 +3,35 @@ import axios from "axios";
 import PoiManagementComponent from "../components/PoiManagementComponent";
 import { useFetchPois } from "../hooks/useFetchData"; // Import the custom hook
 
-// TODO:
-// - fix form:
-//    - clean on open
-//    - styling
-//
-// - 
-
 const PoiManagementPage = () => {
   const { data: pois, loading, error } = useFetchPois(); 
   
-  // Handle adding a new POI
-  const handleAddPoi = async (newPoi) => {
+  const handleAddPoint = async (newPoint) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/app/addPoi", newPoi);
-      // If the hook doesn't automatically refetch, you can manually update the state
-      // or trigger a refetch if your hook supports it.
+      const response = await axios.post("http://localhost:5000/api/app/addPoi", newPoint);
       console.log("New POI added:", response.data);
     } catch (err) {
       console.error("Error adding POI:", err.message);
     }
   };
 
+  const handleAddPolygon = async (newPolygon) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/app/addPoi", newPolygon);
+      console.log("New Polygon added:", response.data);
+    } catch (err) {
+      console.error("Error adding Polygon:", err.message);
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+
 
   return (
     <div>
       <h1>POI Management</h1>
-      <PoiManagementComponent pois={pois} onAddPoi={handleAddPoi} />
+      <PoiManagementComponent pois={pois} onAddPoi={handleAddPoint} onAddPolygon={handleAddPolygon}/>
     </div>
   );
 };

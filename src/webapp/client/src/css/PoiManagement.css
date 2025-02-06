@@ -137,3 +137,46 @@
 .cancel-button:hover {
   background-color: #d32f2f;
 }
+
+.combined-map-container {
+  position: relative;
+}
+
+.map-controls {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.add-point-button, .add-polygon-button {
+  margin: 5px;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.add-point-button.active, .add-polygon-button.active {
+  background-color: #0056b3;
+}
+
+.poi-form {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  background-color: white;
+  padding: 10px;
+  border: 1px solid #ccc;
+  z-index: 1000;
+}
+
+.poi-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.poi-form input {
+  margin-bottom: 10px;
+}

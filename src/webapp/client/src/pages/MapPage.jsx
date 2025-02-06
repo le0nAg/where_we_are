@@ -10,7 +10,6 @@ const MapPage = () => {
 
   return (
     <div>
-      <h1>Map with Backend Data</h1>
       <MapComponent data={data} />
     </div>
   );

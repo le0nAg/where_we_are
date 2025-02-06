@@ -6,12 +6,12 @@ const AddPoiForm = ({ coordinates, formData, onFormChange, onSubmit, onCancel })
       <div className="poi-form-container">
         <h2>Add New Point of Interest</h2>
         <form onSubmit={onSubmit}>
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>Coordinates:</label>
             <p className="coordinates-display">
               {coordinates?.[0]?.toFixed(5)}, {coordinates?.[1]?.toFixed(5)}
             </p>
-          </div>
+          </div> */}
 
           <div className="form-group">
             <label htmlFor="name">Name:</label>

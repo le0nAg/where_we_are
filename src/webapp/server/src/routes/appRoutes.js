@@ -18,14 +18,32 @@ router.get(`${API_PREFIX}/getAllPois`, async (req, res) => {
   res.json(pois);
 });
 
+//TODO: test and ensure it's complete
 router.post(`${API_PREFIX}/addPoi`, async (req, res) => {
-  console.log("arrived poi:\n");
-  console.log(req.body);
-  const newPoi = new POI(req.body);
+  const newPoi  = new PointOfInterest(req.body);
+  const util = require('util');
+  console.log(util.inspect(req.body, false, null, true /* enable colors */));
+
+  res.status(200);
   try {
     const savedPoi = await newPoi.save();
     console.log("saved");
     res.status(201).json(savedPoi);
+  } catch (err) {
+    console.log("error diocan: ");
+    console.log(err.message);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+router.delete(`${API_PREFIX}/deletePois`, async (req, res) => {
+  const newPoi  = new PointOfInterest(req.body);
+  const util = require('util');
+  console.log("req arrived");
+  console.log(util.inspect(req.body, false, null, true /* enable colors */));
+
+  try {
+    res.status(204).json({});
   } catch (err) {
     console.log("error diocan: ");
     console.log(err.message);
