@@ -28,7 +28,11 @@ const useFetchData = (url) => {
 };
 
 const useFetchPois = () => {
-    return useFetchData("http://localhost:5000/api/app/getAllPois");
-  };
+  return useFetchData("http://localhost:5000/api/app/getAllPois");
+};
 
-export {useFetchData, useFetchPois};
+const useFetchPoi = ( uidPoi ) => {
+  return useFetchData(`http://localhost:5000/api/app/pois/${uidPoi}`);
+}
+
+export {useFetchData, useFetchPois, useFetchPoi};

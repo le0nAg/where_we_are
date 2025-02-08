@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const POISchema = new mongoose.Schema({
   type: { type: String, enum: ['Feature'], required: true, default: 'Feature' },
   geometry: {
-    type: { type: String, enum: ['Point', 'LineString', 'Polygon'], required: true },
+    type: { type: String, enum: ['Polygon'], required: true },
     coordinates: { type: [], required: true }, // Array of coordinates
   },
   properties: {
