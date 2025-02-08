@@ -47,3 +47,6 @@ jspm_packages
 
 #Excluding build directory
 public/
+
+#Exluding idea
+.idea/*
