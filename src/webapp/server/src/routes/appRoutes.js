@@ -8,6 +8,10 @@ const PointOfInterest = require("../models/poiSchema");
 
 const API_PREFIX = "/api/app"
 
+router.get(`${API_PREFIX}/test`, (req, res) => {
+  res.json({ message: "Welcome to the App route!" });
+});
+
 router.get(`${API_PREFIX}/map`, userAuthnBearerBased, async (req, res) => {
   const id = getIdFromReq(req);
   const user = await User.findById(id).select('username');
