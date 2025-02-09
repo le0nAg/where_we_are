@@ -6,7 +6,7 @@ import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import AddPoiForm from "./AddPoiForm";
-import "../css/PoiManagement.css";
+import "../css/poiManagement.css";
 
 // Fix leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
