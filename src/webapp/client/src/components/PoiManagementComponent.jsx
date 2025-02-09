@@ -6,6 +6,7 @@ import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import AddPoiForm from "./AddPoiForm";
+import ShowPoiComponent from "./ShowPoiComponent";
 import "../css/PoiManagement.css";
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -20,6 +21,7 @@ const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: "", description: "" });
   const [selectedPolygon, setSelectedPolygon] = useState(null);
+  const [selectedPoiId, setSelectedPoiId] = useState(null);
 
   const handleAddPolygonClick = () => {
     setIsAddingPolygon(true);
@@ -68,24 +70,15 @@ const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
         />
 
         {/* Existing Polygon POIs */}
-        {pois.filter(p => p.geometry.type === "Polygon").map((poi, i) => (
+        {pois.map((poi, i) => (
           <Polygon
             key={i}
             positions={poi.geometry.coordinates}
             pathOptions={{ color: "purple" }}
+            eventHandlers={{ click: () => {
+              setSelectedPoiId(poi._id);            
+            } }}
           >
-            <Popup>
-              <h3>{poi.properties.name}</h3>
-              <p>{poi.properties.description}</p>
-              {poi.properties.images?.map((image, idx) => (
-                <img
-                  key={idx}
-                  src={image}
-                  alt={`${idx}`}
-                  style={{ width: "100px", margin: "5px" }}
-                />
-              ))}
-            </Popup>
           </Polygon>
         ))}
 
@@ -128,6 +121,11 @@ const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
           }}
         />
       )}
+
+      {selectedPoiId && (
+        <ShowPoiComponent poiId={selectedPoiId} onClose={() => setSelectedPoiId(null)} />
+      )}
+
     </div>
   );
 };
