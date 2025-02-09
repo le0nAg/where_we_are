@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Polygon, Popup } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { FeatureGroup } from "react-leaflet";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -8,7 +8,6 @@ import L from "leaflet";
 import AddPoiForm from "./AddPoiForm";
 import "../css/PoiManagement.css";
 
-// Fix leaflet marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
@@ -17,69 +16,43 @@ L.Icon.Default.mergeOptions({
 });
 
 const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
-  const [isAddingPoint, setIsAddingPoint] = useState(false);
   const [isAddingPolygon, setIsAddingPolygon] = useState(false);
-  const [selectedCoords, setSelectedCoords] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: "", description: "" });
-
-  const handleAddPointClick = () => {
-    setIsAddingPoint(true);
-    setIsAddingPolygon(false);
-    setShowForm(false);
-    setSelectedCoords(null);
-  };
+  const [selectedPolygon, setSelectedPolygon] = useState(null);
 
   const handleAddPolygonClick = () => {
     setIsAddingPolygon(true);
-    setIsAddingPoint(false);
     setShowForm(false);
-    setSelectedCoords(null);
   };
 
   const handleCreatedPolygon = (e) => {
     const layer = e.layer;
     const polygon = layer.toGeoJSON();
-    onAddPolygon(polygon);
+    setSelectedPolygon(polygon);
     setIsAddingPolygon(false);
     setShowForm(true);
   };
 
-  const MapClickHandler = () => {
-    useMapEvents({
-      click: (e) => {
-        if (isAddingPoint) {
-          setSelectedCoords([e.latlng.lat, e.latlng.lng]);
-          setShowForm(true);
-          setIsAddingPoint(false);
-        }
-      },
-    });
-    return null;
-  };
-
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !selectedCoords) return;
+    if (!formData.name || !selectedPolygon) return;
 
     const newPoi = {
       type: "Feature",
-      geometry: {
-        type: "Point",//FIXME
-        coordinates: [selectedCoords[1], selectedCoords[0]],
-      },
+      geometry: selectedPolygon.geometry,
       properties: {
         ...formData,
         images: [],
         osmTags: {},
-        category: "place",
+        category: "area",
       },
     };
 
-    onAddPoi(newPoi);
+    onAddPolygon(newPoi);
     setShowForm(false);
     setFormData({ name: "", description: "" });
-    setSelectedCoords(null);
+    setSelectedPolygon(null);
   };
 
   return (
@@ -94,24 +67,28 @@ const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        {/* Existing points POIs */}
-        {pois.filter(p => p.geometry.type === "Point").map((poi, i) => (
-          <Marker
+        {/* Existing Polygon POIs */}
+        {pois.filter(p => p.geometry.type === "Polygon").map((poi, i) => (
+          <Polygon
             key={i}
-            position={[poi.geometry.coordinates[1], poi.geometry.coordinates[0]]}
+            positions={poi.geometry.coordinates}
+            pathOptions={{ color: "purple" }}
           >
             <Popup>
               <h3>{poi.properties.name}</h3>
               <p>{poi.properties.description}</p>
+              {poi.properties.images?.map((image, idx) => (
+                <img
+                  key={idx}
+                  src={image}
+                  alt={`${idx}`}
+                  style={{ width: "100px", margin: "5px" }}
+                />
+              ))}
             </Popup>
-          </Marker>
+          </Polygon>
         ))}
 
-        {/* Selected position marker */}
-        {selectedCoords && (
-          <Marker position={selectedCoords} />
-        )}
-        
         {isAddingPolygon && (
           <FeatureGroup>
             <EditControl
@@ -128,35 +105,26 @@ const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
             />
           </FeatureGroup>
         )}
-
-        <MapClickHandler />
       </MapContainer>
 
       <div className="map-controls">
         <button
-          className={`add-point-button ${isAddingPoint ? "active" : ""}`}
-          onClick={handleAddPointClick}
-        >
-          {isAddingPoint ? "Click map to select location" : "Add Point"}
-        </button>
-        <button
           className={`add-polygon-button ${isAddingPolygon ? "active" : ""}`}
           onClick={handleAddPolygonClick}
         >
-          {isAddingPolygon ? "Draw polygon on map" : "Add Polygon"}
+          {isAddingPolygon ? "Draw polygon on map" : "Add Area"}
         </button>
       </div>
       
       {showForm && (
         <AddPoiForm
-          coordinates={selectedCoords}
           formData={formData}
           onFormChange={setFormData}
           onSubmit={handleFormSubmit}
           onCancel={() => {
             setShowForm(false);
-            setSelectedCoords(null);
-            setFormData("", "");
+            setSelectedPolygon(null);
+            setFormData({ name: "", description: "" });
           }}
         />
       )}
