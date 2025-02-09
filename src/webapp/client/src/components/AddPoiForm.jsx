@@ -1,18 +1,18 @@
 import React from "react";
 
-const AddPoiForm = ({ coordinates, formData, onFormChange, onSubmit, onCancel }) => {
+const AddPoiForm = ({  
+  formData, 
+  onFormChange, 
+  onSubmit, 
+  onCancel, 
+  isSaving, 
+  error 
+}) => {
   return (
     <div className="form-overlay">
       <div className="poi-form-container">
         <h2>Add New Point of Interest</h2>
         <form onSubmit={onSubmit}>
-          {/* <div className="form-group">
-            <label>Coordinates:</label>
-            <p className="coordinates-display">
-              {coordinates?.[0]?.toFixed(5)}, {coordinates?.[1]?.toFixed(5)}
-            </p>
-          </div> */}
-
           <div className="form-group">
             <label htmlFor="name">Name:</label>
             <input
@@ -21,6 +21,7 @@ const AddPoiForm = ({ coordinates, formData, onFormChange, onSubmit, onCancel })
               value={formData.name}
               onChange={(e) => onFormChange({ ...formData, name: e.target.value })}
               required
+              disabled={isSaving}
             />
           </div>
 
@@ -31,15 +32,27 @@ const AddPoiForm = ({ coordinates, formData, onFormChange, onSubmit, onCancel })
               value={formData.description}
               onChange={(e) => onFormChange({ ...formData, description: e.target.value })}
               rows="3"
+              disabled={isSaving}
             />
           </div>
 
+          {error && <div className="error-message">{error}</div>}
+
           <div className="form-actions">
-            <button type="button" className="cancel-button" onClick={onCancel}>
+            <button 
+              type="button" 
+              className="cancel-button" 
+              onClick={onCancel}
+              disabled={isSaving}
+            >
               Cancel
             </button>
-            <button type="submit" className="submit-button">
-              Save POI
+            <button 
+              type="submit" 
+              className="submit-button"
+              disabled={isSaving}
+            >
+              {isSaving ? "Saving..." : "Save POI"}
             </button>
           </div>
         </form>

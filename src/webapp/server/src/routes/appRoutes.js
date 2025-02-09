@@ -8,24 +8,12 @@ const PointOfInterest = require("../models/poiSchema");
 
 const API_PREFIX = "/api/app"
 
-router.get(`${API_PREFIX}/map`, userAuthnBearerBased, async (req, res) => {
-  const id = getIdFromReq(req);
-  const user = await User.findById(id).select('username');
-
-  res.json({ message: `Welcome, ${user.username}. You accessed the Map route!` });
-});
-
 router.get(`${API_PREFIX}/getAllPois`, async (req, res) => {
   const pois = await PointOfInterest.find();
   res.json(pois);
 });
 
-//TODO: test and ensure it's complete
 router.post(`${API_PREFIX}/addPoi`, async (req, res) => {
-  const newPoi  = new PointOfInterest(req.body);
-  const util = require('util');
-  console.log(util.inspect(req.body, false, null, true /* enable colors */));
-
   res.status(200);
   try {
     const savedPoi = await newPoi.save();

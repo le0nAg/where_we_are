@@ -8,6 +8,7 @@ import L from "leaflet";
 import AddPoiForm from "./AddPoiForm";
 import ShowPoiComponent from "./ShowPoiComponent";
 import "../css/poiManagement.css";
+import usePostPoi from "../hooks/usePostPoi"
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -22,6 +23,7 @@ const PoiManagementComponent = ({ pois, onAddPolygon }) => {
   const [formData, setFormData] = useState({ name: "", description: "" });
   const [selectedPolygon, setSelectedPolygon] = useState(null);
   const [selectedPoiId, setSelectedPoiId] = useState(null);
+  const { postPoi, isLoading: isSaving, error: saveError } = usePostPoi();
 
   const handleAddPolygonClick = () => {
     setIsAddingPolygon(true);
@@ -36,7 +38,7 @@ const PoiManagementComponent = ({ pois, onAddPolygon }) => {
     setShowForm(true);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !selectedPolygon) return;
 
@@ -51,10 +53,16 @@ const PoiManagementComponent = ({ pois, onAddPolygon }) => {
       },
     };
 
-    onAddPolygon(newPoi);
-    setShowForm(false);
-    setFormData({ name: "", description: "" });
-    setSelectedPolygon(null);
+    try {
+      const savedPoi = await postPoi(newPoi);
+      onAddPolygon(savedPoi); // Passa il POI salvato con l'ID dal backend
+      setShowForm(false);
+      setFormData({ name: "", description: "" });
+      setSelectedPolygon(null);
+    } catch (err) {
+      // L'errore è già gestito dall'hook, possiamo registrarlo qui se necessario
+      console.error("Error saving POI:", err);
+    }
   };
 
   return (
@@ -119,9 +127,10 @@ const PoiManagementComponent = ({ pois, onAddPolygon }) => {
             setSelectedPolygon(null);
             setFormData({ name: "", description: "" });
           }}
+          isSaving={isSaving}
+          error={saveError}
         />
       )}
-
       {selectedPoiId && (
         <ShowPoiComponent poiId={selectedPoiId} onClose={() => setSelectedPoiId(null)} />
       )}
