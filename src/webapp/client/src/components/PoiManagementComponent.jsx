@@ -7,7 +7,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import AddPoiForm from "./AddPoiForm";
 import ShowPoiComponent from "./ShowPoiComponent";
-import "../css/PoiManagement.css";
+import "../css/poiManagement.css";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({

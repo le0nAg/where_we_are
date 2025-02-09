@@ -10,7 +10,7 @@ const MapPage = () => {
 
   return (
     <div>
-      <MapComponent data={data} />
+      <MapComponent data={data}/>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import { MapContainer, TileLayer, Polygon, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import "../css/map.css";
 
 // Configurazione delle icone (rimane invariata sebbene in questo caso non usiamo Marker)
 delete L.Icon.Default.prototype._getIconUrl;
@@ -21,9 +22,10 @@ const MapComponent = ({ data }) => {
 
   return (
     <MapContainer
+      className="map-container-map"
       center={[46.0667, 11.1211]}
       zoom={14}
-      style={{ width: "100%", height: "80vh" }}
+      //style={{ width: "100%", height: "100vh" }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
