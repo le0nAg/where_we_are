@@ -1,153 +1,180 @@
-import React, { useState, useEffect } from 'react';
-import { useFetchPoi } from '../hooks/useFetchData';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "../css/showPoiComponent.css";
 
-const ShowPoiComponent = ({ poiId, onClose, initialEditing = false }) => {
-  const { data: fetchedData, loading, error: fetchError } = useFetchPoi(poiId);
+const ShowPoiComponent = ({ poiId, onClose }) => {
   const [poiData, setPoiData] = useState(null);
-  const [isEditing, setIsEditing] = useState(initialEditing);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    images: []
-  });
-  const [saveError, setSaveError] = useState('');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [newImage, setNewImage] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Quando vengono caricati i dati del POI, aggiorno lo stato
   useEffect(() => {
-    if (fetchedData) {
-      setPoiData(fetchedData);
-      setFormData({
-        name: fetchedData.properties.name,
-        description: fetchedData.properties.description || '',
-        images: fetchedData.properties.images || []
-      });
-      setCurrentImageIndex(0); // resetto l'indice del carosello
-    }
-  }, [fetchedData]);
+    const fetchPoiDetails = async () => {
+      try {
+        const response = await axios.get(`/api/app/pois/${poiId}`);
+        setPoiData(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load POI details");
+        setLoading(false);
+      }
+    };
 
-  // Se il componente viene aperto con initialEditing abilitato, imposto la modalità modifica
-  useEffect(() => {
-    if (initialEditing) {
-      setIsEditing(true);
-    }
-  }, [initialEditing]);
+    if (poiId) fetchPoiDetails();
+  }, [poiId]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleChange = (e) => {
+    setPoiData({
+      ...poiData,
+      properties: {
+        ...poiData.properties,
+        [e.target.name]: e.target.value
+      }
+    });
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, images: [...prev.images, reader.result] }));
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleFileChange = (e) => {
+    setNewImage(e.target.files[0]);
   };
 
-  const removeImage = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
-    // eventualmente resetto l'indice se rimuovo l'immagine corrente
-    setCurrentImageIndex(0);
-  };
+  const handleImageUpload = async () => {
+    if (!newImage) return;
 
-  // Funzioni per gestire il carosello delle immagini
-  const nextImage = () => {
-    if (formData.images.length > 0) {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % formData.images.length);
-    }
-  };
+    const formData = new FormData();
+    formData.append("image", newImage);
 
-  const prevImage = () => {
-    if (formData.images.length > 0) {
-      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + formData.images.length) % formData.images.length);
-    }
-  };
-
-  const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/app/pois/${poiId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          properties: {
-            ...poiData.properties,
-            name: formData.name,
-            description: formData.description,
-            images: formData.images.filter(img => img.trim() !== '')
+      const response = await axios.post(
+        `/api/poi/${poiId}/images`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
           }
-        })
+        }
+      );
+
+      setPoiData({
+        ...poiData,
+        properties: {
+          ...poiData.properties,
+          images: [...poiData.properties.images, response.data]
+        }
       });
-      if (!response.ok) throw new Error('Salvataggio fallito');
-      const updatedData = await response.json();
-      setPoiData(updatedData);
-      setIsEditing(false);
-      setSaveError('');
+      setNewImage(null);
     } catch (err) {
-      setSaveError(err.message);
+      setError("Failed to upload image");
     }
   };
 
-  if (loading) return <div>Caricamento...</div>;
-  if (fetchError) return <div>Errore nel caricamento dei dati</div>;
-  if (!poiData) return null;
+  const handleDeleteImage = async (imageId) => {
+    try {
+      await axios.delete(`/api/poi/images/${imageId}`);
+      setPoiData({
+        ...poiData,
+        properties: {
+          ...poiData.properties,
+          images: poiData.properties.images.filter(img => img._id !== imageId)
+        }
+      });
+    } catch (err) {
+      setError("Failed to delete image");
+    }
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    
+    try {
+      await axios.put(`/api/poi/${poiId}`, {
+        name: poiData.properties.name,
+        description: poiData.properties.description
+      });
+      setIsSaving(false);
+      onClose();
+    } catch (err) {
+      setError("Failed to save changes");
+      setIsSaving(false);
+    }
+  };
+
+  if (loading) return <div className="modal-overlay">Loading...</div>;
+  if (error) return <div className="modal-overlay">{error}</div>;
 
   return (
-    <div className="poi-details">
-      {saveError && <div className="error">{saveError}</div>}
-      <button onClick={onClose} className="close-btn">Chiudi</button>
-      {isEditing ? (
-        <div className="edit-mode">
-          <div>
-            <input type="file" onChange={handleImageUpload} />
-          </div>
-          <div className="image-list">
-            {formData.images.map((img, index) => (
-              <div key={index} className="image-item">
-                <img src={img} alt={`poi-${index}`} style={{ width: '100px' }} />
-                <button onClick={() => removeImage(index)}>Rimuovi</button>
-              </div>
-            ))}
-          </div>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="close-button" onClick={onClose}>×</button>
+        <h2>Edit POI</h2>
+        
+        <form onSubmit={handleSave}>
           <div className="form-group">
-            <label>Nome:</label>
-            <input name="name" value={formData.name} onChange={handleInputChange} />
+            <label>Name:</label>
+            <input
+              type="text"
+              name="name"
+              value={poiData.properties.name || ""}
+              onChange={handleChange}
+            />
           </div>
+
           <div className="form-group">
-            <label>Descrizione:</label>
-            <textarea name="description" value={formData.description} onChange={handleInputChange} />
+            <label>Description:</label>
+            <textarea
+              name="description"
+              value={poiData.properties.description || ""}
+              onChange={handleChange}
+            />
           </div>
-          <div className="form-actions">
-            <button onClick={handleSave}>Salva</button>
-            <button onClick={() => setIsEditing(false)}>Annulla</button>
-          </div>
-        </div>
-      ) : (
-        <div className="view-mode">
-          <h2>{poiData.properties.name}</h2>
-          <p>{poiData.properties.description}</p>
-          {formData.images.length > 0 && (
-            <div className="carousel">
-              <button onClick={prevImage}>&lt;</button>
-              <img
-                src={formData.images[currentImageIndex]}
-                alt={`Visuale POI ${currentImageIndex + 1}`}
-                onError={(e) => { e.target.style.display = 'none'; }}
-                style={{ width: '200px' }}
-              />
-              <button onClick={nextImage}>&gt;</button>
+
+          <div className="images-section">
+            <h3>Images:</h3>
+            <div className="image-grid">
+              {poiData.properties.images.map((image) => (
+                <div key={image._id} className="image-item">
+                  <img src={image.url} alt={image.name} />
+                  <button
+                    type="button"
+                    className="delete-image-button"
+                    onClick={() => handleDeleteImage(image._id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
             </div>
-          )}
-          <button onClick={() => setIsEditing(true)}>Modifica</button>
-        </div>
-      )}
+
+            <div className="image-upload">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                onClick={handleImageUpload}
+                disabled={!newImage}
+              >
+                Upload Image
+              </button>
+            </div>
+          </div>
+
+          {error && <div className="error-message">{error}</div>}
+
+          <div className="form-actions">
+            <button
+              type="submit"
+              disabled={isSaving}
+              className="save-button"
+            >
+              {isSaving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

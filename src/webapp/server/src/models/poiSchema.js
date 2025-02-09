@@ -9,7 +9,7 @@ const POISchema = new mongoose.Schema({
   properties: {
     name: { type: String, required: true },
     description: { type: String },
-    images: [{ type: String }], // Array of image URLs
+    images: [{ type: String }], // Array of images identifiers
     osmTags: mongoose.Schema.Types.Mixed, // OSM tags (key-value pairs)
     category: { type: String, enum: ['street', 'place', 'area', 'other'], 
                 required: true },
