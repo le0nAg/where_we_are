@@ -1,5 +1,6 @@
 // hooks/useDeletePois.js
 import { useState } from "react";
+import URI from "./uri.js";
 
 export const useDeletePois = () => {
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -12,7 +13,7 @@ export const useDeletePois = () => {
       setDeleteLoading(true);
       setDeleteError(null);
 
-      const response = await fetch("http://localhost:5000/api/app/deletePois", {
+      const response = await fetch(`${URI}/api/app/deletePois`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
