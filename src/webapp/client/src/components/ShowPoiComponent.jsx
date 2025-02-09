@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../css/ShowPoiComponent.css";
+import "../css/showPoiComponent.css";
 
 const ShowPoiComponent = ({ poiId, onClose }) => {
   const [poiData, setPoiData] = useState(null);
@@ -12,7 +12,7 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
   useEffect(() => {
     const fetchPoiDetails = async () => {
       try {
-        const response = await axios.get(`/api/poi/${poiId}`);
+        const response = await axios.get(`/api/app/pois/${poiId}`);
         setPoiData(response.data);
         setLoading(false);
       } catch (err) {
