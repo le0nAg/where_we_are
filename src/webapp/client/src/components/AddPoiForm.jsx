@@ -1,10 +1,11 @@
 import React from "react";
+import "../css/form.css";
 
 const AddPoiForm = ({ coordinates, formData, onFormChange, onSubmit, onCancel }) => {
   return (
     <div className="form-overlay">
       <div className="poi-form-container">
-        <h2>Add New Point of Interest</h2>
+        <h2>Aggiungi nuovo punto d'interesse</h2>
         <form onSubmit={onSubmit}>
           {/* <div className="form-group">
             <label>Coordinates:</label>
@@ -14,7 +15,7 @@ const AddPoiForm = ({ coordinates, formData, onFormChange, onSubmit, onCancel })
           </div> */}
 
           <div className="form-group">
-            <label htmlFor="name">Name:</label>
+            <label htmlFor="name">Nome:</label>
             <input
               id="name"
               type="text"
@@ -25,7 +26,7 @@ const AddPoiForm = ({ coordinates, formData, onFormChange, onSubmit, onCancel })
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Description:</label>
+            <label htmlFor="description">Descrizione:</label>
             <textarea
               id="description"
               value={formData.description}
@@ -36,10 +37,10 @@ const AddPoiForm = ({ coordinates, formData, onFormChange, onSubmit, onCancel })
 
           <div className="form-actions">
             <button type="button" className="cancel-button" onClick={onCancel}>
-              Cancel
+              Annulla
             </button>
             <button type="submit" className="submit-button">
-              Save POI
+              Salva POI
             </button>
           </div>
         </form>

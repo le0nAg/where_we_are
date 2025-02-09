@@ -9,13 +9,6 @@ import AddPoiForm from "./AddPoiForm";
 import ShowPoiComponent from "./ShowPoiComponent";
 import "../css/poiManagement.css";
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-});
-
 const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
   const [isAddingPolygon, setIsAddingPolygon] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -66,7 +59,7 @@ const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          //attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
         {/* Existing Polygon POIs */}
@@ -105,7 +98,7 @@ const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
           className={`add-polygon-button ${isAddingPolygon ? "active" : ""}`}
           onClick={handleAddPolygonClick}
         >
-          {isAddingPolygon ? "Draw polygon on map" : "Add Area"}
+          {isAddingPolygon ? "Disegna un poligono" : "Aggiungi Area"}
         </button>
       </div>
       
