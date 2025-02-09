@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useFetchPois } from "../hooks/useFetchData";
 import { useDeletePois } from "../hooks/useDeletePois";
-const util = require('util');
 
 const PoiListComponent = ({ pois }) => {
   const [selectedPois, setSelectedPois] = useState(new Set());

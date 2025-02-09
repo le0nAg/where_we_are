@@ -47,7 +47,7 @@ const MapComponent = ({ data }) => {
               <img
                 key={i}
                 src={image}
-                alt={`Image ${i}`}
+                alt={`${i}`}
                 style={{ width: "100px", margin: "5px" }}
               />
             ))}

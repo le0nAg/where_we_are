@@ -44,7 +44,7 @@ function App() {
               <Route path="/settings" element={<Settings />} />
               <Route path="/login" element={<Login/>}></Route>
               <Route path="/list" element={<PoiListComponent data={data}/>}></Route>
-              <Route path="/poiVisualizer" element={<ShowPoiComponent poiId={'678d34e7c78677a02b9fb4f9'}/>}></Route>
+              <Route path="/poiVisualizer" element={<ShowPoiComponent poiId={'678d34e7c78677a02b9fb4fa'}/>}></Route>
               
               <Route path="/uploader" 
                 element={<UploaderComponent onUploadSuccess={handleImageUploadSuccess} />}></Route>
