@@ -13,7 +13,6 @@ const ShowPoiComponent = ({ poiId, onClose, initialEditing = false }) => {
   const [saveError, setSaveError] = useState('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Quando vengono caricati i dati del POI, aggiorno lo stato
   useEffect(() => {
     if (fetchedData) {
       setPoiData(fetchedData);
@@ -22,11 +21,10 @@ const ShowPoiComponent = ({ poiId, onClose, initialEditing = false }) => {
         description: fetchedData.properties.description || '',
         images: fetchedData.properties.images || []
       });
-      setCurrentImageIndex(0); // resetto l'indice del carosello
+      setCurrentImageIndex(0); 
     }
   }, [fetchedData]);
 
-  // Se il componente viene aperto con initialEditing abilitato, imposto la modalità modifica
   useEffect(() => {
     if (initialEditing) {
       setIsEditing(true);
@@ -54,11 +52,9 @@ const ShowPoiComponent = ({ poiId, onClose, initialEditing = false }) => {
       ...prev,
       images: prev.images.filter((_, i) => i !== index)
     }));
-    // eventualmente resetto l'indice se rimuovo l'immagine corrente
     setCurrentImageIndex(0);
   };
 
-  // Funzioni per gestire il carosello delle immagini
   const nextImage = () => {
     if (formData.images.length > 0) {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % formData.images.length);
@@ -100,6 +96,7 @@ const ShowPoiComponent = ({ poiId, onClose, initialEditing = false }) => {
   if (!poiData) return null;
 
   return (
+    
     <div className="poi-details">
       {saveError && <div className="error">{saveError}</div>}
       <button onClick={onClose} className="close-btn">Chiudi</button>

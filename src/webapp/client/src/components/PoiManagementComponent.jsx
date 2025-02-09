@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapContainer, TileLayer, Polygon, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Polygon } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { FeatureGroup } from "react-leaflet";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 
-const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
+const PoiManagementComponent = ({ pois, onAddPolygon }) => {
   const [isAddingPolygon, setIsAddingPolygon] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: "", description: "" });
@@ -76,7 +76,7 @@ const PoiManagementComponent = ({ pois, onAddPoi, onAddPolygon }) => {
             positions={poi.geometry.coordinates}
             pathOptions={{ color: "purple" }}
             eventHandlers={{ click: () => {
-              setSelectedPoiId(poi._id);            
+                setSelectedPoiId(poi._id);      
             } }}
           >
           </Polygon>
