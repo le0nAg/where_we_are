@@ -34,3 +34,5 @@ app.use(express.json());
 
 app.use(authRoute);
 app.use(appRoute);
+
+module.exports = app;

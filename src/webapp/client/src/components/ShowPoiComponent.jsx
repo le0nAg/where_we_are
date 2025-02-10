@@ -1,28 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import "../css/showPoiComponent.css";
 
-const ShowPoiComponent = ({ poiId, onClose }) => {
-  const [poiData, setPoiData] = useState(null);
-  const [loading, setLoading] = useState(true);
+const ShowPoiComponent = ({ poi, onClose }) => {
+  const [poiData, setPoiData] = useState(poi);
   const [error, setError] = useState("");
   const [newImage, setNewImage] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    const fetchPoiDetails = async () => {
-      try {
-        const response = await axios.get(`/api/app/pois/${poiId}`);
-        setPoiData(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to load POI details");
-        setLoading(false);
-      }
-    };
-
-    if (poiId) fetchPoiDetails();
-  }, [poiId]);
 
   const handleChange = (e) => {
     setPoiData({
@@ -46,7 +30,7 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
 
     try {
       const response = await axios.post(
-        `/api/poi/${poiId}/images`,
+        `/api/poi/${poi._id}/images`,
         formData,
         {
           headers: {
@@ -88,7 +72,7 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
     setIsSaving(true);
     
     try {
-      await axios.put(`/api/poi/${poiId}`, {
+      await axios.put(`/api/app/pois/${poi._id}`, {
         name: poiData.properties.name,
         description: poiData.properties.description
       });
@@ -100,7 +84,6 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
     }
   };
 
-  if (loading) return <div className="modal-overlay">Loading...</div>;
   if (error) return <div className="modal-overlay">{error}</div>;
 
   return (
