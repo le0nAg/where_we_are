@@ -7,10 +7,8 @@ const PoiListComponent = ({ pois }) => {
   const [selectedPois, setSelectedPois] = useState(new Set());
   const [currentImageIndexes, setCurrentImageIndexes] = useState({});
 
-  const { data, loading, error } = useFetchPois();
   const { deletePois, deleteLoading, deleteError } = useDeletePois();
 
-  pois = data;
 
   const handleCheckboxChange = (poiId) => {
     setSelectedPois((prev) => {
@@ -35,9 +33,6 @@ const PoiListComponent = ({ pois }) => {
     await deletePois([...selectedPois]);
     //TODO: refresh
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div className="poi-list">
