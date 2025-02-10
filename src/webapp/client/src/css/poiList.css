@@ -9,9 +9,10 @@
   max-width: 600px;
   margin: 20px auto;
   position: relative;
+  height: 100%;
+  overflow-y: auto;
 }
 
-/* Checkbox spostati a sinistra */
 .checkbox-container {
   display: flex;
   align-items: center;
@@ -23,7 +24,6 @@
   cursor: pointer;
 }
 
-/* Stile degli elementi della lista */
 .poi-item {
   display: flex;
   align-items: center;
@@ -34,7 +34,6 @@
   background: #f9f9f9;
 }
 
-/* Struttura interna */
 .poi-content {
   display: flex;
   flex: 1;
@@ -42,7 +41,6 @@
   gap: 15px;
 }
 
-/* Immagini */
 .image-carousel {
   position: relative;
   width: 100px;
@@ -56,7 +54,6 @@
   border-radius: 5px;
 }
 
-/* Controlli del carosello */
 .carousel-controls {
   position: absolute;
   top: 50%;
@@ -81,7 +78,6 @@
   background: rgba(0, 0, 0, 0.8);
 }
 
-/* Testo */
 .poi-info {
   flex: 1;
 }
@@ -97,10 +93,8 @@
 }
 
 .delete-button-fixed {
-  position: fixed;
-  bottom: 10px;
-  left: 130px;
-  width: auto;
+  bottom: 20px;
+  right: 20px;
   background-color: #d9534f;
   color: white;
   border: none;

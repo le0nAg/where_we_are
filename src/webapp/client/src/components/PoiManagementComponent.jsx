@@ -72,13 +72,13 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
 
   return (
     <div className="poi-management-container">
-      <div className="sidebar-controls">
-        <button className="toggle-sidebar-button" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          ☰
-        </button>
-      </div>
 
       <div className={`poi-sidebar ${sidebarOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
+        <div className="sidebar-controls">
+          <button className="toggle-sidebar-button" onClick={() => setSidebarOpen(!sidebarOpen)}>
+            ☰
+          </button>
+        </div>
         <PoiListComponent pois={pois}></PoiListComponent>
       </div>
 
