@@ -73,6 +73,16 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
   return (
     <div className="poi-management-container">
 
+      <div class="top-bar">
+        <div class="logo-container">
+          <img src="" class="logo" />
+          <span class="brand-name">WhereWeAre</span>
+        </div>
+        <div class="auth-container">
+          <button class="auth-button">Login</button>
+        </div>
+      </div>
+
       <div className={`poi-sidebar ${sidebarOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
         <div className="sidebar-controls">
           <button className="toggle-sidebar-button" onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -138,7 +148,6 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
 
       {selectedPoiId && <ShowPoiComponent poiId={selectedPoiId} onClose={() => setSelectedPoiId(null)} />}
     </div>
-
   );
 };
 
