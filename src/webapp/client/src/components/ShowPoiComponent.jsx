@@ -107,11 +107,11 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-button" onClick={onClose}>×</button>
-        <h2>Edit POI</h2>
+        <h2>Modifica POI</h2>
         
         <form onSubmit={handleSave}>
           <div className="form-group">
-            <label>Name:</label>
+            <label>Nome:</label>
             <input
               type="text"
               name="name"
@@ -121,7 +121,7 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
           </div>
 
           <div className="form-group">
-            <label>Description:</label>
+            <label>Descrizione:</label>
             <textarea
               name="description"
               value={poiData.properties.description || ""}
@@ -130,7 +130,7 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
           </div>
 
           <div className="images-section">
-            <h3>Images:</h3>
+            <h3>Immagini:</h3>
             <div className="image-grid">
               {poiData.properties.images.map((image) => (
                 <div key={image._id} className="image-item">
@@ -140,7 +140,7 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
                     className="delete-image-button"
                     onClick={() => handleDeleteImage(image._id)}
                   >
-                    Delete
+                    Elimina
                   </button>
                 </div>
               ))}
@@ -157,7 +157,7 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
                 onClick={handleImageUpload}
                 disabled={!newImage}
               >
-                Upload Image
+                Upload
               </button>
             </div>
           </div>
@@ -170,7 +170,7 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
               disabled={isSaving}
               className="save-button"
             >
-              {isSaving ? "Saving..." : "Save Changes"}
+              {isSaving ? "Salvando..." : "Salva"}
             </button>
           </div>
         </form>
