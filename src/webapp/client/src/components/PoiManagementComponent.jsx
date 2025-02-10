@@ -4,14 +4,13 @@ import { EditControl } from "react-leaflet-draw";
 import { FeatureGroup } from "react-leaflet";
 import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import AddPoiForm from "./AddPoiForm";
 import ShowPoiComponent from "./ShowPoiComponent";
 import "../css/poiManagement.css";
 import usePostPoi from "../hooks/usePostPoi"
 
-const PoiManagementComponent = ({ pois, onAddPolygon }) => {
-
+const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
+  const [pois, setPois] = useState(initialPois);
   const [isAddingPolygon, setIsAddingPolygon] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: "", description: "" });
@@ -27,8 +26,17 @@ const PoiManagementComponent = ({ pois, onAddPolygon }) => {
 
   const handleCreatedPolygon = (e) => {
     const layer = e.layer;
-    const polygon = layer.toGeoJSON();
-    setSelectedPolygon(polygon);
+    const geojson = layer.toGeoJSON();
+    const convertCoordinates = (coords) => {
+      return coords[0].map(coord => [coord[1], coord[0]]);
+    };
+    setSelectedPolygon({
+      ...geojson,
+      geometry: {
+        ...geojson.geometry,
+        coordinates: [convertCoordinates(geojson.geometry.coordinates)]
+      }
+    });
     setIsAddingPolygon(false);
     setShowForm(true);
   };
@@ -50,7 +58,8 @@ const PoiManagementComponent = ({ pois, onAddPolygon }) => {
 
     try {
       const savedPoi = await postPoi(newPoi);
-      onAddPolygon(savedPoi); // Passa il POI salvato con l'ID dal backend
+      setPois((prevPois) => [...prevPois, savedPoi]);
+      onAddPolygon(savedPoi);
       setShowForm(false);
       setFormData({ name: "", description: "" });
       setSelectedPolygon(null);

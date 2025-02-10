@@ -6,6 +6,8 @@ const { getIdFromReq } = require("../utils/jwtUtils");
 const User = require("../models/operatorModel");
 const PointOfInterest = require("../models/poiSchema");
 
+const util = require('util');
+
 const API_PREFIX = "/api/app"
 
 router.get(`${API_PREFIX}/getAllPois`, async (req, res) => {
@@ -15,19 +17,22 @@ router.get(`${API_PREFIX}/getAllPois`, async (req, res) => {
 
 router.post(`${API_PREFIX}/addPoi`, async (req, res) => {
   res.status(200);
+  console.log(util.inspect(req.body, false, null, true /* enable colors */))
+
   try {
+    const newPoi = new PointOfInterest(req.body);
     const savedPoi = await newPoi.save();
     console.log("saved");
-    res.status(201).json(savedPoi);
+    res.status(201).json(savedPoi); 
   } catch (err) {
-    console.log("error diocan: ");
+    console.log("error: ");
     console.log(err.message);
     res.status(400).json({ message: err.message });
   }
 });
 
 router.delete(`${API_PREFIX}/deletePois`, async (req, res) => {
-  const newPoi  = new PointOfInterest(req.body);
+  const newPoi = new PointOfInterest(req.body);
   const util = require('util');
   console.log("req arrived");
   console.log(util.inspect(req.body, false, null, true /* enable colors */));
@@ -105,7 +110,7 @@ router.put(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
     if (!updatedPoi) {
       return res.status(404).json({ message: 'POI non trovato' });
     }
-    
+
     res.json(updatedPoi);
   } catch (err) {
     res.status(400).json({ message: err.message });
