@@ -8,6 +8,7 @@ import AddPoiForm from "./AddPoiForm";
 import ShowPoiComponent from "./ShowPoiComponent";
 import "../css/poiManagement.css";
 import usePostPoi from "../hooks/usePostPoi"
+import PoiListComponent from "./PoiListComponent";
 
 const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
   const [pois, setPois] = useState(initialPois);
@@ -78,18 +79,7 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
       </div>
 
       <div className={`poi-sidebar ${sidebarOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
-        <h2>Lista POI</h2>
-        <ul>
-          {pois.map((poi) => (
-            <li key={poi._id} onClick={() => 
-                {
-                  setSelectedPoi(poi);
-                }
-              }>
-              {poi.properties.name}
-            </li>
-          ))}
-        </ul>
+        <PoiListComponent pois={pois}></PoiListComponent>
       </div>
 
       <MapContainer center={[46.0667, 11.1211]} zoom={14} className="map-container">
