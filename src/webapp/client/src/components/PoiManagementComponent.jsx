@@ -75,11 +75,12 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
 
       <div class="top-bar">
         <div class="logo-container">
-          <img src="" class="logo" />
+          <img src="/logo_64.png" alt="error" />
           <span class="brand-name">WhereWeAre</span>
         </div>
+        {/* TODO */}
         <div class="auth-container">
-          <button class="auth-button">Login</button>
+          <button class="auth-button">Logout</button>
         </div>
       </div>
 
