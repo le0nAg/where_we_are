@@ -1,162 +1,151 @@
-.poi-management-container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-}
-
-.map-container {
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  transition: margin-left 0.3s ease; /* Smooth transition when sidebar opens */
-}
-
-.poi-sidebar {
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 300px;
+  width: 100%;
   height: 100%;
-  background-color: white;
-  padding: 20px;
-  border-right: 1px solid #ccc;
-  box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  overflow-y: auto;
-  transition: transform 0.3s ease-in-out;
-  transform: translateX(-100%); /* Sidebar starts offscreen */
-}
-
-.poi-sidebar.open {
-  transform: translateX(0); /* When open, move sidebar into view */
-}
-
-.poi-sidebar h2 {
-  font-size: 1.5rem;
-  color: #333;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.poi-sidebar ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.poi-sidebar li {
-  padding: 12px 15px;
-  font-size: 1.1rem;
-  color: #333;
-  cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.poi-sidebar li:hover {
-  background-color: #f0f0f0;
-  color: #007bff;
-}
-
-.poi-sidebar li.selected {
-  background-color: #007bff;
-  color: white;
-}
-
-.toggle-sidebar-button {
-  position: fixed;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 10px;
-  font-size: 1.5rem;
-  border-radius: 5px;
-  cursor: pointer;
-  z-index: 1001;
-  transition: background-color 0.3s ease;
-}
-
-.toggle-sidebar-button:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-
-.toggle-sidebar-button:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.map-controls {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 2;
-}
-
-.add-polygon-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s, transform 0.3s;
-}
-
-.add-polygon-button:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
-}
-
-.add-polygon-button.active {
-  background-color: #28a745;
-}
-
-.add-polygon-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.leaflet-control-attribution {
-  display: none !important;
-}
-
-/* Aggiungi le modifiche per il modulo POI */
-.poi-form-buttons {
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+textarea {
+  resize: none;
+  height: 80px;
+}
+
+.images-section {
   margin-top: 20px;
 }
 
-.poi-form-buttons button {
-  padding: 12px 20px;
-  font-size: 1rem;
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.image-item {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.image-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.delete-image-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
 }
 
-.poi-form-buttons .cancel-button {
-  background-color: #ccc;
+.image-upload {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
 }
 
-.poi-form-buttons .save-button {
-  background-color: #28a745;
+.image-upload input {
+  flex-grow: 1;
 }
 
-.poi-form-buttons button:hover {
-  transform: scale(1.05);
+.image-upload button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-.poi-form-buttons .cancel-button:hover {
-  background-color: #bbb;
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
 }
 
-.poi-form-buttons .save-button:hover {
-  background-color: #218838;
+.save-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+  text-align: center;
+}
+
+.error-message {
+  background: #ffdddd;
+  color: #d8000c;
+  border: 1px solid #d8000c;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

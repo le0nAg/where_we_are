@@ -162,7 +162,6 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
             </div>
           </div>
 
-          {error && <div className="error-message">{error}</div>}
 
           <div className="form-actions">
             <button
@@ -173,6 +172,8 @@ const ShowPoiComponent = ({ poiId, onClose }) => {
               {isSaving ? "Salvando..." : "Salva"}
             </button>
           </div>
+
+          {error && <div className="error-message">{error}</div>}
         </form>
       </div>
     </div>
