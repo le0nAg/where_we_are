@@ -15,7 +15,7 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: "", description: "" });
   const [selectedPolygon, setSelectedPolygon] = useState(null);
-  const [selectedPoiId, setSelectedPoiId] = useState(null);
+  const [selectedPoi,     setSelectedPoi] = useState(null);
   const { postPoi, isLoading: isSaving, error: saveError } = usePostPoi();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -81,7 +81,11 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
         <h2>Lista POI</h2>
         <ul>
           {pois.map((poi) => (
-            <li key={poi._id} onClick={() => setSelectedPoiId(poi._id)}>
+            <li key={poi._id} onClick={() => 
+                {
+                  setSelectedPoi(poi);
+                }
+              }>
               {poi.properties.name}
             </li>
           ))}
@@ -96,7 +100,7 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
             key={i}
             positions={poi.geometry.coordinates}
             pathOptions={{ color: "purple" }}
-            eventHandlers={{ click: () => setSelectedPoiId(poi._id) }}
+            eventHandlers={{ click: () => setSelectedPoi(poi) }}
           />
         ))}
 
@@ -142,7 +146,7 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
         />
       )}
 
-      {selectedPoiId && <ShowPoiComponent poiId={selectedPoiId} onClose={() => setSelectedPoiId(null)} />}
+      {selectedPoi && <ShowPoiComponent poi={selectedPoi} onClose={() => setSelectedPoi(null)} />}
     </div>
 
   );

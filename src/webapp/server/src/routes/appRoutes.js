@@ -10,42 +10,92 @@ const util = require('util');
 
 const API_PREFIX = "/api/app"
 
+
+//done
 router.get(`${API_PREFIX}/getAllPois`, async (req, res) => {
   const pois = await PointOfInterest.find();
   res.json(pois);
 });
 
+//done
 router.post(`${API_PREFIX}/addPoi`, async (req, res) => {
   res.status(200);
-  console.log(util.inspect(req.body, false, null, true /* enable colors */))
 
   try {
     const newPoi = new PointOfInterest(req.body);
     const savedPoi = await newPoi.save();
-    console.log("saved");
+    
     res.status(201).json(savedPoi); 
   } catch (err) {
-    console.log("error: ");
-    console.log(err.message);
+    
     res.status(400).json({ message: err.message });
   }
 });
 
+//done remember state update in frontend
 router.delete(`${API_PREFIX}/deletePois`, async (req, res) => {
-  const newPoi = new PointOfInterest(req.body);
-  const util = require('util');
-  console.log("req arrived");
-  console.log(util.inspect(req.body, false, null, true /* enable colors */));
-
   try {
-    res.status(204).json({});
+    const idsToDelete = req.body.ids;
+    
+    if (!idsToDelete || !Array.isArray(idsToDelete) || idsToDelete.length === 0) {
+      return res.status(400).json({ message: "Invalid or empty ID array" });
+    }
+
+    const result = await PointOfInterest.deleteMany({ _id: { $in: idsToDelete } });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "No POIs found with given IDs" });
+    }
+    res.status(204).send();
   } catch (err) {
-    console.log("error diocan: ");
-    console.log(err.message);
     res.status(400).json({ message: err.message });
   }
 });
 
+// GET single POI
+router.get(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
+  try {
+    const poi = await PointOfInterest.findById(req.params.uidPoi);
+    if (!poi) {
+      return res.status(404).json({ message: 'POI non trovato' });
+    }
+    res.json(poi);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// TODO: reload after call it in frontend
+// UPDATE POI
+// put method on patch is prefered since the modification could arrive to the point of changing completly the POI
+router.put(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
+  try {
+    const poiId = req.params.uidPoi;
+    console.log(poiId);
+    console.log(util.inspect(req.body, false, null, true));
+
+    const updateData = {
+      'properties.name': req.body.properties?.name || req.body.name,
+      'properties.description': req.body.properties?.description || req.body.description,
+    };
+
+    const updatedPoi = await PointOfInterest.findByIdAndUpdate(poiId, { $set: updateData }, { new: true, runValidators: true });
+
+    if (!updatedPoi) {
+      return res.status(404).json({ message: 'POI non trovato' });
+    }
+
+    res.json(updatedPoi);
+    console.log('save successful');
+  } catch (err) {
+    console.error("Error updating POI:", err);
+    res.status(400).json({ message: err.message });
+  }
+});
+
+//FINO A QUI FUNZIONANO 
+
+//IMAGE MANAGEMENT 
 // Configure multer for file storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -74,46 +124,6 @@ router.post(`${API_PREFIX}/upload-images`, async (req, res) => {
   } catch (err) {
     console.error("Upload error:", err.message);
     res.status(500).json({ message: "Image upload failed" });
-  }
-});
-
-// GET single POI
-router.get(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
-  try {
-    const poi = await PointOfInterest.findById(req.params.uidPoi);
-    if (!poi) {
-      return res.status(404).json({ message: 'POI non trovato' });
-    }
-    res.json(poi);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// UPDATE POI
-// put method on patch is prefered since the modification could arrive to the point of changing completly the POI
-router.put(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
-  try {
-    const updatedPoi = await Poi.findByIdAndUpdate(
-      req.params.uidPoi,
-      {
-        $set: {
-          'properties.name': req.body.properties.name,
-          'properties.description': req.body.properties.description,
-          'properties.images': req.body.properties.images,
-          // Aggiungi altri campi modificabili se necessario
-        }
-      },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedPoi) {
-      return res.status(404).json({ message: 'POI non trovato' });
-    }
-
-    res.json(updatedPoi);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
   }
 });
 

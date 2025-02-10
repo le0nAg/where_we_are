@@ -13,15 +13,15 @@ import ShowPoiComponent from "./components/ShowPoiComponent";
 
 function App() {
   const { user } = useAuthnContext();
-  console.log(user);
+  // console.log(user);
   const { data, loading, error } = useFetchPois();
-  console.log(data);
+  // console.log(data);
   
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
   const handleImageUploadSuccess = (urls) => {
-    console.log("Images uploaded successfully:", urls);
+    // console.log("Images uploaded successfully:", urls);
     // You can now pass these image URLs when saving a POI
   };
 
@@ -31,9 +31,11 @@ function App() {
           {/* <Sidebar /> */}
           <div className="content">
             <Routes>
-            {//debugging purpose only
-            user ? 
-            console.log("usr: "+user) : console.log("no user")}
+            {
+            //debugging purpose only
+            //user ? 
+            //console.log("usr: "+user) : console.log("no user")
+            }
 
               {/* {<Route path="/" element={<Dashboard />} />}               */}
               
@@ -43,7 +45,7 @@ function App() {
               
               <Route path="/settings" element={<Settings />} />
               <Route path="/login" element={<Login/>}></Route>
-              <Route path="/list" element={<PoiListComponent data={data}/>}></Route>
+              <Route path="/list" element={<PoiListComponent pois={data}/>}></Route>
               <Route path="/poiVisualizer" element={<ShowPoiComponent poiId={'678d34e7c78677a02b9fb4fa'}/>}></Route>
               
               <Route path="/uploader" 
