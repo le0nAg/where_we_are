@@ -4,7 +4,7 @@ import MapPage from "./pages/MapPage";
 import PoiManagement from "./pages/PoiManagementPage";
 import Login from "./pages/authn/Login";
 import Settings from "./pages/Settings";
-import "./css/App.css";
+import "./css/app.css";
 import UploaderComponent from "./components/ImageUploader"; // Ensure this path is correct
 import { useAuthnContext } from "./hooks/useAuthnContext";
 import PoiListComponent from "./components/PoiListComponent";

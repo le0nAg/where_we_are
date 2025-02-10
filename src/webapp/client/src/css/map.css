@@ -1,18 +1,13 @@
-/* CSS per la mappa */
-/* Contenitore della mappa */
 .map-container-map {
-    width: 100vw;
-    height: 100vh;
-  }
-  
-  /* CSS per le immagini nel Popup */
-  .popup-image {
-    width: 100px;
-    margin: 5px;
-  }
-  
-  /* CSS per il Popup */
-  .popup-content {
-    font-size: 14px;
-  }
-  
+  width: 100vw;
+  height: 100vh;
+}
+
+.popup-image {
+  width: 100px;
+  margin: 5px;
+}
+
+.popup-content {
+  font-size: 14px;
+}

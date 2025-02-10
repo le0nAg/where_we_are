@@ -10,20 +10,15 @@ import ShowPoiComponent from "./ShowPoiComponent";
 import "../css/poiManagement.css";
 import usePostPoi from "../hooks/usePostPoi"
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-});
-
 const PoiManagementComponent = ({ pois, onAddPolygon }) => {
+
   const [isAddingPolygon, setIsAddingPolygon] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: "", description: "" });
   const [selectedPolygon, setSelectedPolygon] = useState(null);
   const [selectedPoiId, setSelectedPoiId] = useState(null);
   const { postPoi, isLoading: isSaving, error: saveError } = usePostPoi();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleAddPolygonClick = () => {
     setIsAddingPolygon(true);
@@ -67,27 +62,33 @@ const PoiManagementComponent = ({ pois, onAddPolygon }) => {
 
   return (
     <div className="poi-management-container">
-      <MapContainer
-        center={[46.0667, 11.1211]}
-        zoom={14}
-        className="map-container"
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
+      <div className="sidebar-controls">
+        <button className="toggle-sidebar-button" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          ☰
+        </button>
+      </div>
 
-        {/* Existing Polygon POIs */}
+      <div className={`poi-sidebar ${sidebarOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
+        <h2>Lista POI</h2>
+        <ul>
+          {pois.map((poi) => (
+            <li key={poi._id} onClick={() => setSelectedPoiId(poi._id)}>
+              {poi.properties.name}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <MapContainer center={[46.0667, 11.1211]} zoom={14} className="map-container">
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
         {pois.map((poi, i) => (
           <Polygon
             key={i}
             positions={poi.geometry.coordinates}
             pathOptions={{ color: "purple" }}
-            eventHandlers={{ click: () => {
-                setSelectedPoiId(poi._id);      
-            } }}
-          >
-          </Polygon>
+            eventHandlers={{ click: () => setSelectedPoiId(poi._id) }}
+          />
         ))}
 
         {isAddingPolygon && (
@@ -113,10 +114,10 @@ const PoiManagementComponent = ({ pois, onAddPolygon }) => {
           className={`add-polygon-button ${isAddingPolygon ? "active" : ""}`}
           onClick={handleAddPolygonClick}
         >
-          {isAddingPolygon ? "Draw polygon on map" : "Add Area"}
+          {isAddingPolygon ? "Disegna un poligono" : "Aggiungi Area"}
         </button>
       </div>
-      
+
       {showForm && (
         <AddPoiForm
           formData={formData}
@@ -131,11 +132,10 @@ const PoiManagementComponent = ({ pois, onAddPolygon }) => {
           error={saveError}
         />
       )}
-      {selectedPoiId && (
-        <ShowPoiComponent poiId={selectedPoiId} onClose={() => setSelectedPoiId(null)} />
-      )}
 
+      {selectedPoiId && <ShowPoiComponent poiId={selectedPoiId} onClose={() => setSelectedPoiId(null)} />}
     </div>
+
   );
 };
 
