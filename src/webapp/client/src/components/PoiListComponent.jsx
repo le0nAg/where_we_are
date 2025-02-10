@@ -6,7 +6,7 @@ const PoiListComponent = ({ pois }) => {
   const [selectedPois, setSelectedPois] = useState(new Set());
   const [currentImageIndexes, setCurrentImageIndexes] = useState({});
 
-  const { deletePois, deleteLoading, deleteError } = useDeletePois();
+  const { deletePois, deleteLoading } = useDeletePois();
 
   const handleCheckboxChange = (poiId) => {
     setSelectedPois((prev) => {
