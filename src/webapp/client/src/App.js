@@ -6,14 +6,14 @@ import Login from "./pages/authn/Login";
 import Settings from "./pages/Settings";
 import "./css/app.css";
 import UploaderComponent from "./components/ImageUploader"; // Ensure this path is correct
-import { useAuthnContext } from "./hooks/useAuthnContext";
+// import { useAuthnContext } from "./hooks/useAuthnContext";
 import PoiListComponent from "./components/PoiListComponent";
 import { useFetchPois } from "./hooks/useFetchData";
 import ShowPoiComponent from "./components/ShowPoiComponent";
 
 function App() {
-  const { user } = useAuthnContext();
-  // console.log(user);
+  // const { user } = useAuthnContext();
+  // // console.log(user);
   const { data, loading, error } = useFetchPois();
   // console.log(data);
   

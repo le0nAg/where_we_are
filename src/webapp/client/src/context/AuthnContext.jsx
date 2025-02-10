@@ -93,7 +93,8 @@ export const AuthProvider = ({ children }) => {
 
     // Expose the API instance globally for the app
     state.api = api;
-  }, [state.accessToken, state.user]);
+  });
+  // }, [state.accessToken, state.user]);
 
   return (
     <AuthContext.Provider value={{ ...state, dispatch }}>
