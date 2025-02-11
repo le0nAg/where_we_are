@@ -61,7 +61,7 @@ router.get(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
     }
     res.json(poi);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(404).json({ message: err.message });
   }
 });
 
