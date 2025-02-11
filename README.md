@@ -24,17 +24,24 @@ File di licenza: Contiene le informazioni sulla licenza del software.
 ## Funzionalità Future:
 
 Integrazione di eventi personalizzati per i luoghi d'interesse.
+
 Implementazione di mappe per il tracciamento degli spostamenti in bicicletta.
 
 ## Istruzioni per esecuzione in Locale:
 
 Per eseguire il progetto in locale, seguire questi passaggi:
-Avvio del Server
+
+**Avvio del Server:**
+
 cd where_we_are/src/webapp/server/
+
 npm start
 
-## Avvio del Client
+
+**Avvio del Client:**
+
 cd where_we_are/src/webapp/client/
+
 npm start
 
 ## Licenza:
