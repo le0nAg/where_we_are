@@ -2,7 +2,7 @@
 
 ## Descrizione del Progetto:
 
-### Questo repository contiene il codice sorgente per un pannello operatore dedicato alla gestione dei luoghi di interesse della città di Trento. Il progetto fa parte di un'iniziativa universitaria per la creazione di un sistema turistico interattivo, volto a migliorare l'esperienza degli utenti nell'esplorazione della città.
+Questo repository contiene il codice sorgente per un pannello operatore dedicato alla gestione dei luoghi di interesse della città di Trento. Il progetto fa parte di un'iniziativa universitaria per la creazione di un sistema turistico interattivo, volto a migliorare l'esperienza degli utenti nell'esplorazione della città.
 
 ## Deploy:
 
