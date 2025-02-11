@@ -17,8 +17,6 @@ dotenv.config({
   path: path.resolve(__dirname, `.env.${env}`),
 });
 
-console.log(`Running in ${env} mode`);
-
 // Configurazione di Express
 const app = express();
 app.use(express.json());

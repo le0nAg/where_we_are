@@ -43,22 +43,24 @@ module.exports.Login = async (req, res, next) => {
       return res.status(401).json({ message: 'Incorrect password' });
     }
 
-    // Generate JWT tokens
-    const usrToken = createSecretToken(user._id); // Access token
-    const refreshToken = createRefreshToken(user._id); // Refresh token
+    const accessToken = createSecretToken(user._id); 
+    const refreshToken = createRefreshToken(user._id); 
 
-    console.log("usrToken: "+usrToken);
-
-    // Send the refresh token in a cookie (HTTP-only, Secure)
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true, // Prevent access via JavaScript
-      sameSite: 'Strict', // Prevent sending cookies in cross-site requests
+    // Imposta i cookie HTTP-only
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "Strict", // Previene attacchi CSRF
+      maxAge: 3600000, // 1 ora di validità
     });
 
-    // Send the access token in the Authorization header
-    res.header('Authorization', `Bearer ${usrToken}`);
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 3600000, // 7 giorni di validità
+    });
 
-    // Return success response
     res.status(200).json({ message: "User logged in successfully", success: true });
 
     next();
@@ -70,7 +72,9 @@ module.exports.Login = async (req, res, next) => {
 
 module.exports.Logout = async (req, res, next) => {
   try {
-    res.clearCookie('refreshToken');
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+
     res.status(200).json({ message: "User logged out successfully", success: true });
     next();
   } catch (error) {
@@ -100,3 +104,17 @@ module.exports.RefreshToken = async (req, res) => {
     return res.status(400).send('Invalid refresh token.');
   }
 }
+
+module.exports.CheckAuth = async (req, res) => {
+  try {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+      return res.status(401).json({ isAuthenticated: false });
+    }
+
+    const decoded = verifySecretToken(accessToken);
+    res.status(200).json({ isAuthenticated: true, user: decoded.user });
+  } catch (error) {
+    res.status(401).json({ isAuthenticated: false });
+  }
+};

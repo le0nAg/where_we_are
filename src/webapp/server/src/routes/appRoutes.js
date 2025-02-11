@@ -11,13 +11,11 @@ const util = require('util');
 const API_PREFIX = "/api/app"
 
 
-//done
 router.get(`${API_PREFIX}/getAllPois`, async (req, res) => {
   const pois = await PointOfInterest.find();
   res.json(pois);
 });
 
-//done
 router.post(`${API_PREFIX}/addPoi`, async (req, res) => {
   res.status(200);
 
@@ -32,7 +30,6 @@ router.post(`${API_PREFIX}/addPoi`, async (req, res) => {
   }
 });
 
-//done remember state update in frontend
 router.delete(`${API_PREFIX}/deletePois`, async (req, res) => {
   try {
     const idsToDelete = req.body.ids;
@@ -52,7 +49,6 @@ router.delete(`${API_PREFIX}/deletePois`, async (req, res) => {
   }
 });
 
-// GET single POI
 router.get(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
   try {
     const poi = await PointOfInterest.findById(req.params.uidPoi);
@@ -65,9 +61,7 @@ router.get(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
   }
 });
 
-// TODO: reload after call it in frontend
-// UPDATE POI
-// put method on patch is prefered since the modification could arrive to the point of changing completly the POI
+//TODO manage upload images
 router.put(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
   try {
     const poiId = req.params.uidPoi;
