@@ -12,13 +12,21 @@ Client: https://wwa.ddns.net/
 ## Struttura del Repository:
 
 L'organizzazione dei file segue una gerarchia strutturata per facilitare la comprensione e la gestione del progetto:
+
 /docs/: Contiene la documentazione del progetto.
+
 /src/: Contiene il codice sorgente.
+
 /webapp/: Include il gestionale e la versione web dell'applicazione.
+
 /server/: Contiene il codice backend dell'applicazione.
+
 /client/: Contiene il codice frontend dell'applicazione.
+
 /mobile/: Contiene il codice sorgente dell'app mobile (eventualmente sviluppato in futuro).
+
 README.md: Guida introduttiva al progetto.
+
 File di licenza: Contiene le informazioni sulla licenza del software.
 
 ## Funzionalità Future:
