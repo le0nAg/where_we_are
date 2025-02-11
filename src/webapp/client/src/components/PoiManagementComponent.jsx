@@ -20,31 +20,26 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
   const [selectedPoi, setSelectedPoi] = useState(null);
   const { postPoi, isLoading: isSaving, error: saveError } = usePostPoi();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { fetchPois } = useFetchPois(); // Hook per il fetch dei POI
+  const { fetchPois } = useFetchPois(); 
 
-  // Funzione per aggiornare la lista dei POI
   const refreshPois = async () => {
     try {
-      const updatedPois = await fetchPois(); // Fetch dei POI aggiornati
+      const updatedPois = await fetchPois();
       setPois(updatedPois);
     } catch (err) {
       console.error("Error fetching updated POIs:", err);
     }
   };
 
-  // Effetto per caricare i POI iniziali
   useEffect(() => {
     refreshPois();
-  }, []);
+  }, );
 
-  // Funzione per gestire l'eliminazione dei POI
   const handleDeletePoi = async (deletedPoiIds) => {
     try {
-      // Ottimisticamente aggiorna lo stato frontend
       const updatedPois = pois.filter(poi => !deletedPoiIds.includes(poi._id));
       setPois(updatedPois);
 
-      // Sincronizza con il backend
       await refreshPois();
     } catch (err) {
       console.error("Error updating POI list after deletion:", err);

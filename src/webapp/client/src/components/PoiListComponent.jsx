@@ -30,9 +30,9 @@ const PoiListComponent = ({ pois, onDelete }) => {
   const handleDelete = async () => {
     const deletedPoiIds = [...selectedPois];
     try {
-      await deletePois(deletedPoiIds); // Chiamata API per eliminare i POI
-      onDelete(deletedPoiIds); // Notifica il componente padre per aggiornare lo stato
-      setSelectedPois(new Set()); // Resetta la selezione
+      await deletePois(deletedPoiIds);  
+      onDelete(deletedPoiIds);
+      setSelectedPois(new Set()); 
     } catch (err) {
       console.error("Error deleting POIs:", err);
     }
