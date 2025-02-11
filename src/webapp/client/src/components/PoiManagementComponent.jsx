@@ -114,7 +114,7 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
     <div className="poi-management-container">
       <div className="top-bar">
         <div className="logo-container">
-          <img src="/logo_64.png" alt="error" />
+          <img src="/logo_32.png" alt="error" />
           <span className="brand-name">WhereWeAre</span>
         </div>
         <div className="auth-container">
