@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "start": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "test": "jest"
   },
   "author": "",

@@ -1,4 +1,13 @@
-require("dotenv").config();
+const dotenv = require('dotenv');
+const path = require('path');
+dotenv.config();
+const env = process.env.NODE_ENV || 'dev';
+
+// Load the correct .env file
+dotenv.config({
+  path: path.resolve(__dirname, `.env.${env}`),
+});
+
 const jwt = require("jsonwebtoken");
 
 module.exports.createSecretToken = (id) => {

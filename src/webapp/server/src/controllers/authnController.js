@@ -52,7 +52,6 @@ module.exports.Login = async (req, res, next) => {
     // Send the refresh token in a cookie (HTTP-only, Secure)
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true, // Prevent access via JavaScript
-      //secure: process.env.NODE_ENV === 'production', // Ensure cookies are sent over HTTPS
       sameSite: 'Strict', // Prevent sending cookies in cross-site requests
     });
 
