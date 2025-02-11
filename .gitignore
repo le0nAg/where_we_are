@@ -47,7 +47,7 @@ jspm_packages
 .env.*
 
 #Excluding build directory
-public/
+#public/
 
 #Exluding idea
 .idea/*
