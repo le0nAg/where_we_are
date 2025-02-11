@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDeletePois } from "../hooks/useDeletePois";
 import "../css/poiList.css";
 
-const PoiListComponent = ({ pois }) => {
+const PoiListComponent = ({ pois, onDelete }) => {
   const [selectedPois, setSelectedPois] = useState(new Set());
   const [currentImageIndexes, setCurrentImageIndexes] = useState({});
 
@@ -28,7 +28,14 @@ const PoiListComponent = ({ pois }) => {
   };
 
   const handleDelete = async () => {
-    await deletePois([...selectedPois]);
+    const deletedPoiIds = [...selectedPois];
+    try {
+      await deletePois(deletedPoiIds); // Chiamata API per eliminare i POI
+      onDelete(deletedPoiIds); // Notifica il componente padre per aggiornare lo stato
+      setSelectedPois(new Set()); // Resetta la selezione
+    } catch (err) {
+      console.error("Error deleting POIs:", err);
+    }
   };
 
   return (
