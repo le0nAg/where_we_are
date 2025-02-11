@@ -31,7 +31,7 @@ const useFetchData = (url) => {
 };
 
 const useFetchPois = () => {
-  return useFetchData(`${URI}/api/app/getAllPois`);
+  return useFetchData(`/api/app/getAllPois`);
 };
 
 const useFetchPoi = ( uidPoi ) => {
