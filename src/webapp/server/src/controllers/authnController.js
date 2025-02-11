@@ -68,7 +68,6 @@ module.exports.Login = async (req, res, next) => {
   }
 };
 
-//TO CHECK
 module.exports.Logout = async (req, res, next) => {
   try {
     res.clearCookie('refreshToken');

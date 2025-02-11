@@ -1,10 +1,11 @@
+require("dotenv").config({ path: require("path").resolve(__dirname, "../src/.env.dev") });
 const app = require("../src/index"); // Link to your server file
 const supertest = require("supertest");
 const request = supertest(app);
 const { v4: uuidv4 } = require('uuid');
 
 // Mock di un token valido per autenticazione
-const validToken = "Bearer your_valid_token_here";
+const validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.l26Q8388Uoz46WuvtDzVetoMwSeMV0uwlzNDdhDFhiY";
 let testingPoi;
 let testingOperator;
 
