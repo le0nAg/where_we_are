@@ -95,6 +95,21 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/authn/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+  
+      localStorage.removeItem("accessToken");
+  
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };  
+
   return (
     <div className="poi-management-container">
       <div className="top-bar">
@@ -103,7 +118,7 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
           <span className="brand-name">WhereWeAre</span>
         </div>
         <div className="auth-container">
-          <button className="auth-button">Logout</button>
+          <button className="auth-button" >Logout</button>
         </div>
       </div>
 

@@ -1,25 +1,41 @@
 import { useState } from "react";
-import { useLogin } from "../../hooks/useLogin";
 import { useNavigate } from "react-router-dom";
 import "../../css/login.css";
 
-const Login = () => {
+const Login = ({ setIsAuthenticated }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const { login, error, isLoading } = useLogin();
-  const navigate = useNavigate(); // Initialize the navigate function
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    await login(email, password);
-    
-    const success = await login(email, password); // Assuming `login` returns a success flag
-    if (success) {
-      navigate("/dashboard"); // Redirect to the dashboard on success
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/authn/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        credentials: "include", // Invia i cookie
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      setIsAuthenticated(true); 
+      navigate("/poi-management");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="login-container">
@@ -38,4 +54,4 @@ const Login = () => {
   );
 };
 
-export default Login
+export default Login;

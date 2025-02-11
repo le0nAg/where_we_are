@@ -1,59 +1,87 @@
-import React from "react";
-import { Route, Routes, BrowserRouter } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
 import MapPage from "./pages/MapPage";
-import PoiManagement from "./pages/PoiManagementPage";
+import PoiManagementPage from "./pages/PoiManagementPage";
 import Login from "./pages/authn/Login";
 import Settings from "./pages/Settings";
 import "./css/app.css";
-import UploaderComponent from "./components/ImageUploader"; // Ensure this path is correct
-// import { useAuthnContext } from "./hooks/useAuthnContext";
-import PoiListComponent from "./components/PoiListComponent";
-import { useFetchPois } from "./hooks/useFetchData";
-import ShowPoiComponent from "./components/ShowPoiComponent";
 
 function App() {
-  // const { user } = useAuthnContext();
-  // // console.log(user);
-  const { data, loading, error } = useFetchPois();
-  // console.log(data);
-  
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); 
 
-  const handleImageUploadSuccess = (urls) => {
-    // console.log("Images uploaded successfully:", urls);
-    // You can now pass these image URLs when saving a POI
-  };
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/authn/check-auth", {
+          credentials: "include",
+        });
+
+        const data = await response.json();
+        setIsAuthenticated(data.isAuthenticated);
+      } catch (error) {
+        console.error("Error checking auth:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  if (isLoading) {
+    // TODO: styling
+    return <div>Loading...</div>;
+  }
 
   return (
     <BrowserRouter>
-        <div className="app">
-          {/* <Sidebar /> */}
-          <div className="content">
-            <Routes>
-            {
-            //debugging purpose only
-            //user ? 
-            //console.log("usr: "+user) : console.log("no user")
-            }
+      <div className="app">
+        <div className="content">
+          <Routes>
+            <Route path="/map" element={<MapPage />} />
 
-              {/* {<Route path="/" element={<Dashboard />} />}               */}
-              
-              <Route path="/map" element={<MapPage />} />
-              <Route path="/poi-management" element={<PoiManagement />}/>
-              <Route path="/" element={<PoiManagement />}/>
-              
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/login" element={<Login/>}></Route>
-              <Route path="/list" element={<PoiListComponent pois={data}/>}></Route>
-              <Route path="/poiVisualizer" element={<ShowPoiComponent poiId={'678d34e7c78677a02b9fb4fa'}/>}></Route>
-              
-              <Route path="/uploader" 
-                element={<UploaderComponent onUploadSuccess={handleImageUploadSuccess} />}></Route>
+            <Route
+              path="/login"
+              element={<Login setIsAuthenticated={setIsAuthenticated} />}
+            />
 
-            </Routes>
-          </div>
+            <Route
+              path="/poi-management"
+              element={
+                isAuthenticated ? (
+                  <PoiManagementPage />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+
+            <Route
+              path="/settings"
+              element={
+                isAuthenticated ? (
+                  <Settings />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+
+            <Route
+              path="/"
+              element={
+                isAuthenticated ? (
+                  <Navigate to="/poi-management" />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+          </Routes>
         </div>
+      </div>
     </BrowserRouter>
   );
 }
