@@ -7,6 +7,9 @@ import {  AuthProvider } from './context/AuthnContext';
 //export {default as Login} from './pages/authn/Login';
 //export {default as Signup} from './authn/Signup'; not exposed by design
 
+// if (process.env.NODE_ENV === 'development') {
+//   require('dotenv').config({ path: '.env.development' });
+// }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
