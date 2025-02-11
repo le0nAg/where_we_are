@@ -1,15 +1,15 @@
-Where We Are
+# Where We Are
 
-Descrizione del Progetto:
+## Descrizione del Progetto:
 
-Questo repository contiene il codice sorgente per un pannello operatore dedicato alla gestione dei luoghi di interesse della città di Trento. Il progetto fa parte di un'iniziativa universitaria per la creazione di un sistema turistico interattivo, volto a migliorare l'esperienza degli utenti nell'esplorazione della città.
+### Questo repository contiene il codice sorgente per un pannello operatore dedicato alla gestione dei luoghi di interesse della città di Trento. Il progetto fa parte di un'iniziativa universitaria per la creazione di un sistema turistico interattivo, volto a migliorare l'esperienza degli utenti nell'esplorazione della città.
 
-Deploy:
+## Deploy:
 
 Server: http://wwa.ddns.net:5555/
 Client: https://wwa.ddns.net/
 
-Struttura del Repository:
+## Struttura del Repository:
 
 L'organizzazione dei file segue una gerarchia strutturata per facilitare la comprensione e la gestione del progetto:
 /docs/: Contiene la documentazione del progetto.
@@ -21,21 +21,21 @@ L'organizzazione dei file segue una gerarchia strutturata per facilitare la comp
 README.md: Guida introduttiva al progetto.
 File di licenza: Contiene le informazioni sulla licenza del software.
 
-Funzionalità Future:
+## Funzionalità Future:
 
 Integrazione di eventi personalizzati per i luoghi d'interesse.
 Implementazione di mappe per il tracciamento degli spostamenti in bicicletta.
 
-Istruzioni per esecuzione in Locale:
+## Istruzioni per esecuzione in Locale:
 
 Per eseguire il progetto in locale, seguire questi passaggi:
 Avvio del Server
 cd where_we_are/src/webapp/server/
 npm start
 
-Avvio del Client
+## Avvio del Client
 cd where_we_are/src/webapp/client/
 npm start
 
-Licenza:
+## Licenza:
 GPL-3.0 license
