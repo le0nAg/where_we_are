@@ -9,8 +9,10 @@ const useFetchData = (url) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log(url);
         const response = await fetch(url);
         if (!response.ok) {
+          console.log(response);
           throw new Error("Network response was not ok");
         }
         const result = await response.json();
