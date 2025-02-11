@@ -118,7 +118,7 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
           <span className="brand-name">WhereWeAre</span>
         </div>
         <div className="auth-container">
-          <button className="auth-button" >Logout</button>
+          <button className="auth-button" onClick={handleLogout}>Logout</button>
         </div>
       </div>
 
