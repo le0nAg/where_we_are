@@ -17,13 +17,13 @@ mongoose
   .then(() => console.log("MongoDB is  connected successfully"))
   .catch((err) => console.error(err));
 
-app.listen(SERVER_PORT, () => {
+app.listen(SERVER_PORT,'0.0.0.0', () => {
   console.log(`Server is listening on port ${SERVER_PORT}`);
 });
 
 app.use(
   cors({
-    origin: [`http://localhost:${CLIENT_PORT}`],
+    origin: [`https://whereweare-production.up.railway.app/`],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

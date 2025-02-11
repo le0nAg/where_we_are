@@ -1,15 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.9b275fad.css",
-    "main.js": "/static/js/main.cedbb1f4.js",
-    "static/js/453.290413c5.chunk.js": "/static/js/453.290413c5.chunk.js",
+    "main.css": "/static/css/main.ccc6ae28.css",
+    "main.js": "/static/js/main.412d0652.js",
+    "static/media/trento.png": "/static/media/trento.b461ba916903fca981ef.png",
+    "static/media/logo.png": "/static/media/logo.b3ce9dc30adb56c761e9.png",
+    "static/media/spritesheet.svg": "/static/media/spritesheet.a4e0eb7ad904a4858361.svg",
     "index.html": "/index.html",
-    "main.9b275fad.css.map": "/static/css/main.9b275fad.css.map",
-    "main.cedbb1f4.js.map": "/static/js/main.cedbb1f4.js.map",
-    "453.290413c5.chunk.js.map": "/static/js/453.290413c5.chunk.js.map"
+    "main.ccc6ae28.css.map": "/static/css/main.ccc6ae28.css.map",
+    "main.412d0652.js.map": "/static/js/main.412d0652.js.map"
   },
   "entrypoints": [
-    "static/css/main.9b275fad.css",
-    "static/js/main.cedbb1f4.js"
+    "static/css/main.ccc6ae28.css",
+    "static/js/main.412d0652.js"
   ]
 }
