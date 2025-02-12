@@ -6,13 +6,10 @@ const cors = require('cors');
 const authRoute = require("./routes/authnRoute");
 const appRoute = require("./routes/appRoutes");
 
-// Carica le variabili d'ambiente
 dotenv.config();
 
-// Determine the environment
 const env = process.env.NODE_ENV || 'dev';
 
-// Load the correct .env file
 dotenv.config({
   path: path.resolve(__dirname, `.env.${env}`),
 });
@@ -20,7 +17,11 @@ dotenv.config({
 // Configurazione di Express
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+console.log('Serving static files from:', path.join(__dirname, '../uploads'));
 
 // Connessione al database
 mongoose.connect(process.env.ATLAS_URI, {
@@ -34,6 +35,7 @@ mongoose.connect(process.env.ATLAS_URI, {
 app.get('/', (req, res) => {
   res.send('Server is running!');
 });
+
 
 
 app.use(authRoute);

@@ -1,10 +1,22 @@
 const router = require("express").Router();
-const multer = require("multer");
 const path = require("path");
 const { userAuthnBearerBased } = require("../middlewares/authMiddleware");
 const { getIdFromReq } = require("../utils/jwtUtils");
 const User = require("../models/operatorModel");
 const PointOfInterest = require("../models/poiSchema");
+
+const multer = require("multer");
+const upload = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '../uploads');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const uploadMiddleware = multer({ storage: upload }).array('files');
 
 const util = require('util');
 
@@ -61,13 +73,12 @@ router.get(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
   }
 });
 
-//TODO manage upload images
+
+//TODO manage upload images, done
 router.put(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
+  console.log(req.body);
   try {
     const poiId = req.params.uidPoi;
-    console.log(poiId);
-    console.log(util.inspect(req.body, false, null, true));
-
     const updateData = {
       'properties.name': req.body.properties?.name || req.body.name,
       'properties.description': req.body.properties?.description || req.body.description,
@@ -87,37 +98,52 @@ router.put(`${API_PREFIX}/pois/:uidPoi`, async (req, res) => {
   }
 });
 
-//FINO A QUI FUNZIONANO 
-
-//IMAGE MANAGEMENT 
-// Configure multer for file storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Save images in 'uploads/' directory
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Unique filename
-  },
-});
-
-const upload = multer({ storage });
-
-// Endpoint for multiple image uploads
-//  upload.array("images", 10), <-- if we want to limit the number of upload to X per req
-router.post(`${API_PREFIX}/upload-images`, async (req, res) => {
+router.post(`${API_PREFIX}/upload-images`, uploadMiddleware, async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "No images uploaded" });
     }
 
-    // Extract URLs of uploaded images
     const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
+    const poiId = req.body.poiId;
 
-    console.log("Images saved:", imageUrls);
+    const updatedPoi = await PointOfInterest.findByIdAndUpdate(
+      poiId,
+      { $push: { 'properties.images': { $each: imageUrls } } },
+      { new: true }
+    );
+
+    if (!updatedPoi) {
+      return res.status(404).json({ message: "POI not found" });
+    }
+
+    console.log("Images saved and POI updated:", updatedPoi);
     res.status(201).json({ imageUrls });
   } catch (err) {
     console.error("Upload error:", err.message);
     res.status(500).json({ message: "Image upload failed" });
+  }
+});
+
+router.delete(`${API_PREFIX}/images/:imageUrl`, async (req, res) => {
+  try {
+    const imageUrl = req.params.imageUrl;
+    const poiId = req.body.poiId;
+
+    const updatedPoi = await PointOfInterest.findByIdAndUpdate(
+      poiId,
+      { $pull: { 'properties.images': imageUrl } },
+      { new: true }
+    );
+
+    if (!updatedPoi) {
+      return res.status(404).json({ message: "POI not found" });
+    }
+
+    res.status(204).send();
+  } catch (err) {
+    console.error("Delete error:", err.message);
+    res.status(500).json({ message: "Failed to delete image" });
   }
 });
 
