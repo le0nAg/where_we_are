@@ -1,0 +1,338 @@
+openapi: 3.0.3
+info:
+  title: Where We Are api
+  description: |
+    " Questa API fornisce funzionalità per la gestione di punti di interesse (POI) e la raccolta di statistiche sugli accessi e l'interazione degli utenti. Gli endpoint consentono di aggiungere, modificare e rimuovere POI, oltre a ottenere dati analitici aggregati per comprendere meglio il comportamento degli utenti.
+      
+      Qui sono riportate sia le API già sviluppate sia quelle pianificate, leggere pertanto attentamente la documentazione. 
+    "
+    
+  license:
+    name: GPL 3.0
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+  version: 0.0.1
+externalDocs:
+  description: Find out more about WhereWeAre
+  url: https://github.com/le0nAg/where_we_are/
+
+tags:
+  - name: operator
+    description: Operations about operator
+  - name: poi
+    description: Operations about point of interest
+  - name: poi-stats
+    description: POI statistics and analytics (Coming Soon)
+  - name: events
+    description: Event management (Planned Features)
+
+paths:
+  # Authentication Endpoints
+  /api/authn/signup:
+    post:
+      tags: [operator]
+      summary: Create an operator
+      operationId: createOperator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Operator'
+      responses:
+        '201':
+          description: Operator created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operator'
+        '400':
+          description: Invalid input
+
+  /api/authn/login:
+    post:
+      tags: [operator]
+      summary: Logs operator into the system
+      operationId: loginOperator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: Successful login
+          headers:
+            Authorization:
+              schema: { type: string }
+        '401':
+          description: Invalid credentials
+
+  # POI Endpoints
+  /api/app/pois/getAllPois:
+    get:
+      tags: [poi]
+      summary: Get all POIs
+      operationId: getAllPois
+      responses:
+        '200':
+          description: List of POIs
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Poi'
+        '404':
+          description: No POIs found
+  
+  /api/app/pois/addPoi:  
+    post:
+      tags: [poi]
+      summary: Create a new POI
+      operationId: addPoi
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Poi'
+      responses:
+        '201':
+          description: POI created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poi'
+        '400':
+          description: Invalid input
+
+  /api/app/pois/{poiId}:
+    get:
+      tags: [poi]
+      summary: Get a POI by ID
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: POI details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poi'
+        '404':
+          description: POI not found
+    
+    put:
+      tags: [poi]
+      summary: Update a POI
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Poi'
+      responses:
+        '200':
+          description: Updated POI
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poi'
+        '404':
+          description: POI not found
+
+    delete:
+      tags: [poi]
+      summary: Delete a POI
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: POI deleted
+        '404':
+          description: POI not found
+
+  /api/app/deletePois:
+    delete:
+      tags: [poi]
+      summary: Delete multiple POIs
+      responses:
+        '204':
+          description: POIs deleted
+        '400':
+          description: Invalid input
+
+  /api/app/upload-images:
+    post:
+      tags: [poi]
+      summary: Upload images
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images: 
+                  type: array
+                  items: 
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Images uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  imageUrls: 
+                    type: array
+                    items: { type: string }
+
+  # POI Statistics (Coming Soon)
+  /api/app/poi-stats/{poiId}:
+    get:
+      tags: [poi-stats]
+      summary: Get POI statistics
+      description: Coming Soon - Endpoint under development
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '501':
+          description: Not implemented yet
+
+  # Events (Planned Features)
+  /api/app/events:
+    post:
+      tags: [events]
+      summary: Create event
+      description: Planned feature - Not implemented
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '501':
+          description: Not implemented yet
+
+components:
+  schemas:
+    Operator:
+      type: object
+      required: [email, username, password]
+      properties:
+        email: 
+          type: string
+          format: email
+        username: { type: string }
+        password: { type: string }
+        createdAt: 
+          type: string
+          format: date-time
+          readOnly: true
+
+    Poi:
+      type: object
+      required: [geometry, properties]
+      properties:
+        type: 
+          type: string
+          enum: [Feature]
+          default: Feature
+        geometry:
+          type: object
+          required: [type, coordinates]
+          properties:
+            type: 
+              type: string
+              enum: [Polygon]
+            coordinates: 
+              type: array
+              items: 
+                type: array
+                items: 
+                  type: number
+        properties:
+          type: object
+          required: [name, category]
+          properties:
+            name: { type: string }
+            description: { type: string }
+            images: 
+              type: array
+              items: { type: string }
+            osmTags: { type: object }
+            category: 
+              type: string
+              enum: [street, place, area, other]
+
+    PoiStats:
+      type: object
+      properties:
+        poiId: 
+          type: string
+          description: Reference to POI
+        visits:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp: 
+                type: string
+                format: date-time
+        rating:
+          type: object
+          properties:
+            upvotes: 
+              type: integer 
+              minimum: 0
+              default: 0
+            downvotes: 
+              type: integer 
+              minimum: 0
+              default: 0
+
+    Event:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        startDate: 
+          type: string
+          format: date-time
+        endDate: 
+          type: string
+          format: date-time
+        location:
+          type: object
+          properties:
+            type: 
+              type: string
+              enum: [Point]
+              default: Point
+            coordinates: 
+              type: array
+              items: { type: number }
+        organizer: 
+          type: string
+          description: "Operator ID"
+        status: 
+          type: string
+          enum: [draft, published, canceled]
+          default: draft
