@@ -1,56 +1,71 @@
-# Where We Are
+# Where We Are 🚀
 
-## Descrizione del Progetto:
+Benvenuto nel repository di **Where We Are**, un pannello operatore dedicato alla gestione dei luoghi di interesse della città di Trento! 🏛️🌍 Questo progetto fa parte di un'iniziativa universitaria per la creazione di un sistema turistico interattivo, pensato per migliorare l'esperienza degli utenti nell'esplorazione della città. 
 
-Questo repository contiene il codice sorgente per un pannello operatore dedicato alla gestione dei luoghi di interesse della città di Trento. Il progetto fa parte di un'iniziativa universitaria per la creazione di un sistema turistico interattivo, volto a migliorare l'esperienza degli utenti nell'esplorazione della città.
+---
 
-## Deploy:
+## 🌐 Deploy
 
-Server: http://wwa.ddns.net:5555/
-Client: https://wwa.ddns.net/
+🔹 **Server:** [wwa.ddns.net:5555](http://wwa.ddns.net:5555/)
 
-## Struttura del Repository:
+🔹 **Client:** [wwa.ddns.net](https://wwa.ddns.net/)
 
-L'organizzazione dei file segue una gerarchia strutturata per facilitare la comprensione e la gestione del progetto:
+---
 
-/docs/: Contiene la documentazione del progetto.
+## 📂 Struttura del Repository
 
-/src/: Contiene il codice sorgente.
+Il progetto è organizzato in modo chiaro per una facile gestione:
 
-/webapp/: Include il gestionale e la versione web dell'applicazione.
+```
+/docs/     ➝ Documentazione del progetto
+/src/      ➝ Codice sorgente principale
+/webapp/   ➝ Gestionale e versione web dell'applicazione
+/server/   ➝ Backend dell'applicazione
+/client/   ➝ Frontend dell'applicazione
+/mobile/   ➝ Codice sorgente per l'app mobile (sviluppo futuro)
+README.md  ➝ Guida introduttiva al progetto
+LICENSE    ➝ Informazioni sulla licenza del software
+```
 
-/server/: Contiene il codice backend dell'applicazione.
+---
 
-/client/: Contiene il codice frontend dell'applicazione.
+## 🔮 Funzionalità Future
 
-/mobile/: Contiene il codice sorgente dell'app mobile (eventualmente sviluppato in futuro).
+✨ Integrazione di eventi personalizzati per i luoghi d'interesse
 
-README.md: Guida introduttiva al progetto.
+🚴 Implementazione di mappe per il tracciamento degli spostamenti in bicicletta
 
-File di licenza: Contiene le informazioni sulla licenza del software.
+---
 
-## Funzionalità Future:
+## ⚙️ Istruzioni per l'esecuzione in locale
 
-Integrazione di eventi personalizzati per i luoghi d'interesse.
+Per eseguire il progetto in locale, segui questi semplici passaggi:
 
-Implementazione di mappe per il tracciamento degli spostamenti in bicicletta.
-
-## Istruzioni per esecuzione in Locale:
-
-Per eseguire il progetto in locale, seguire questi passaggi:
-
-**Avvio del Server:**
-
+### 📡 Avvio del Server:
+```sh
 cd where_we_are/src/webapp/server/
-
 npm start
+```
 
-
-**Avvio del Client:**
-
+### 💻 Avvio del Client:
+```sh
 cd where_we_are/src/webapp/client/
-
 npm start
+```
 
-## Licenza:
-GPL-3.0 license
+### ⚠️ Attenzione sull'upload delle immagini
+
+Si segnala che l'upload di immagini potrebbe presentare problemi, poiché il server è configurato per salvare i file nella directory `/uploads` della macchina locale su cui è in esecuzione. Tuttavia, non è possibile garantire automaticamente la corretta configurazione dei permessi delle cartelle sul sistema dell'utente. Si consiglia di verificare e, se necessario, modificare i permessi della cartella di destinazione per evitare errori durante il caricamento.
+
+---
+
+## 📜 Licenza
+
+Questo progetto è distribuito sotto licenza **GPL-3.0**.
+
+📖 Maggiori dettagli sono disponibili nel file di licenza incluso nel repository.
+
+---
+
+💡 **Contribuisci e segui gli aggiornamenti!** Sentiti libero di aprire issue, suggerire miglioramenti o contribuire al codice. 🚀
+
