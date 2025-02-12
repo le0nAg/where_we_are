@@ -1,6 +1,6 @@
 # Where We Are 🚀
 
-Benvenuto nel repository di **Where We Are**, un pannello operatore dedicato alla gestione dei luoghi di interesse della città di Trento! 🏛️🌍 Questo progetto fa parte di un'iniziativa universitaria per la creazione di un sistema turistico interattivo, pensato per migliorare l'esperienza degli utenti nell'esplorazione della città. 
+Benvenuto nel repository di **Where We Are**, un pannello operatore dedicato alla gestione dei luoghi di interesse della città di Trento! 🏛️🌍 Questo progetto fa parte di un mix tra un'esame universitario (Ingegneria del software) e un'iniziativa per la creazione di un sistema turistico interattivo, pensato per migliorare l'esperienza degli utenti nell'esplorazione della città con l'ambizione di scalare anche su altre realtà. 
 
 ---
 
@@ -39,7 +39,7 @@ LICENSE    ➝ Informazioni sulla licenza del software
 
 ## ⚙️ Istruzioni per l'esecuzione in locale
 
-Per eseguire il progetto in locale, segui questi semplici passaggi:
+Per eseguire il progetto in locale, segui questi passaggi:
 
 ### 📡 Avvio del Server:
 ```sh
@@ -67,5 +67,15 @@ Questo progetto è distribuito sotto licenza **GPL-3.0**.
 
 ---
 
-💡 **Contribuisci e segui gli aggiornamenti!** Sentiti libero di aprire issue, suggerire miglioramenti o contribuire al codice. 🚀
+## 👥 Contributors
+
+- **[Leonardo Agostini](https://github.com/le0nAg)** 
+- **Andrea Gonzo Dellaidotti**
+- **[Filippo Favaron](https://github.com/FiloFav)**
+
+Se hai dato il tuo contributo, non esitare ad aggiungere il tuo nome! 🎉
+
+---
+
+
 
