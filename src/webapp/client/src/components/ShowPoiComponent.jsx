@@ -125,10 +125,7 @@ const ShowPoiComponent = ({ poi, onClose }) => {
                 <div key={index} className="image-item">
                   <img
                     src={`${imageUrl}`}
-                    alt={`POI Image ${index}`}
-                    onError={(e) => {
-                      alert(imageUrl);
-                    }}
+                    alt=""
                   />
                   <button
                     type="button"
