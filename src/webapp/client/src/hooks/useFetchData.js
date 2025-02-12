@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import URI from "./uri.js";
 
 const useFetchData = (url) => {
   const [data, setData] = useState(null);
@@ -31,11 +30,11 @@ const useFetchData = (url) => {
 };
 
 const useFetchPois = () => {
-  return useFetchData(`${URI}/api/app/getAllPois`);
+  return useFetchData(`${process.env.REACT_APP_API_URL}/api/app/getAllPois`);
 };
 
-const useFetchPoi = ( uidPoi ) => {
-  return useFetchData(`${URI}/api/app/pois/${uidPoi}`);
-}
+const useFetchPoi = (uidPoi) => {
+  return useFetchData(`${process.env.REACT_APP_API_URL}/api/app/pois/${uidPoi}`);
+};
 
-export {useFetchData, useFetchPois, useFetchPoi};
+export { useFetchData, useFetchPois, useFetchPoi };

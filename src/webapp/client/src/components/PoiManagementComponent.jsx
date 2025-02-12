@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Polygon } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import { FeatureGroup } from "react-leaflet";
@@ -7,8 +7,9 @@ import "leaflet/dist/leaflet.css";
 import AddPoiForm from "./AddPoiForm";
 import ShowPoiComponent from "./ShowPoiComponent";
 import "../css/poiManagement.css";
-import usePostPoi from "../hooks/usePostPoi"
+import usePostPoi from "../hooks/usePostPoi";
 import PoiListComponent from "./PoiListComponent";
+import { useFetchPois } from "../hooks/useFetchData";
 
 const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
   const [pois, setPois] = useState(initialPois);
@@ -16,9 +17,34 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ name: "", description: "" });
   const [selectedPolygon, setSelectedPolygon] = useState(null);
-  const [selectedPoi,     setSelectedPoi] = useState(null);
+  const [selectedPoi, setSelectedPoi] = useState(null);
   const { postPoi, isLoading: isSaving, error: saveError } = usePostPoi();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { fetchPois } = useFetchPois(); 
+
+  const refreshPois = async () => {
+    try {
+      const updatedPois = await fetchPois();
+      setPois(updatedPois);
+    } catch (err) {
+      console.error("Error fetching updated POIs:", err);
+    }
+  };
+
+  useEffect(() => {
+    refreshPois();
+  }, );
+
+  const handleDeletePoi = async (deletedPoiIds) => {
+    try {
+      const updatedPois = pois.filter(poi => !deletedPoiIds.includes(poi._id));
+      setPois(updatedPois);
+
+      await refreshPois();
+    } catch (err) {
+      console.error("Error updating POI list after deletion:", err);
+    }
+  };
 
   const handleAddPolygonClick = () => {
     setIsAddingPolygon(true);
@@ -65,22 +91,34 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
       setFormData({ name: "", description: "" });
       setSelectedPolygon(null);
     } catch (err) {
-      // L'errore è già gestito dall'hook, possiamo registrarlo qui se necessario
       console.error("Error saving POI:", err);
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/authn/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+  
+      localStorage.removeItem("accessToken");
+  
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };  
+
   return (
     <div className="poi-management-container">
-
-      <div class="top-bar">
-        <div class="logo-container">
-          <img src="/logo_64.png" alt="error" />
-          <span class="brand-name">WhereWeAre</span>
+      <div className="top-bar">
+        <div className="logo-container">
+          <img src="/logo_32.png" alt="error" />
+          <span className="brand-name">WhereWeAre</span>
         </div>
-        {/* TODO */}
-        <div class="auth-container">
-          <button class="auth-button">Logout</button>
+        <div className="auth-container">
+          <button className="auth-button" onClick={handleLogout}>Logout</button>
         </div>
       </div>
 
@@ -90,7 +128,7 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
             ☰
           </button>
         </div>
-        <PoiListComponent pois={pois}></PoiListComponent>
+        <PoiListComponent pois={pois} onDelete={handleDeletePoi} />
       </div>
 
       <MapContainer center={[46.0667, 11.1211]} zoom={14} className="map-container">

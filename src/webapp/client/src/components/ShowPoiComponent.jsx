@@ -5,7 +5,7 @@ import "../css/showPoiComponent.css";
 const ShowPoiComponent = ({ poi, onClose }) => {
   const [poiData, setPoiData] = useState(poi);
   const [error, setError] = useState("");
-  const [newImage, setNewImage] = useState(null);
+  const [newImages, setNewImages] = useState([]); 
   const [isSaving, setIsSaving] = useState(false);
 
   const handleChange = (e) => {
@@ -13,54 +13,57 @@ const ShowPoiComponent = ({ poi, onClose }) => {
       ...poiData,
       properties: {
         ...poiData.properties,
-        [e.target.name]: e.target.value
-      }
+        [e.target.name]: e.target.value,
+      },
     });
   };
 
   const handleFileChange = (e) => {
-    setNewImage(e.target.files[0]);
+    setNewImages([...e.target.files]);
   };
 
   const handleImageUpload = async () => {
-    if (!newImage) return;
+    if (newImages.length === 0) return; 
 
     const formData = new FormData();
-    formData.append("image", newImage);
+    newImages.forEach((image) => {
+      formData.append("files", image); 
+    });
+    formData.append("poiId", poi._id); 
 
     try {
-      const response = await axios.post(
-        `/api/poi/${poi._id}/images`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
+      const response = await axios.post(`/api/app/upload-images`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       setPoiData({
         ...poiData,
         properties: {
           ...poiData.properties,
-          images: [...poiData.properties.images, response.data]
-        }
+          images: [...(poiData.properties.images || []), ...response.data.imageUrls],
+        },
       });
-      setNewImage(null);
+      setNewImages([]); 
     } catch (err) {
-      setError("Failed to upload image");
+      console.error("Image upload error:", err.response?.data || err);
+      setError("Failed to upload images");
     }
   };
 
-  const handleDeleteImage = async (imageId) => {
+  const handleDeleteImage = async (imageUrl) => {
     try {
-      await axios.delete(`/api/poi/images/${imageId}`);
+      await axios.delete(`/api/app/images/${encodeURIComponent(imageUrl)}`, {
+        data: { poiId: poi._id }, 
+      });
+
       setPoiData({
         ...poiData,
         properties: {
           ...poiData.properties,
-          images: poiData.properties.images.filter(img => img._id !== imageId)
-        }
+          images: poiData.properties.images.filter((url) => url !== imageUrl),
+        },
       });
     } catch (err) {
       setError("Failed to delete image");
@@ -70,11 +73,11 @@ const ShowPoiComponent = ({ poi, onClose }) => {
   const handleSave = async (e) => {
     e.preventDefault();
     setIsSaving(true);
-    
+
     try {
       await axios.put(`/api/app/pois/${poi._id}`, {
         name: poiData.properties.name,
-        description: poiData.properties.description
+        description: poiData.properties.description,
       });
       setIsSaving(false);
       onClose();
@@ -89,9 +92,11 @@ const ShowPoiComponent = ({ poi, onClose }) => {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="close-button" onClick={onClose}>×</button>
+        <button className="close-button" onClick={onClose}>
+          ×
+        </button>
         <h2>Modifica POI</h2>
-        
+
         <form onSubmit={handleSave}>
           <div className="form-group">
             <label>Nome:</label>
@@ -114,16 +119,36 @@ const ShowPoiComponent = ({ poi, onClose }) => {
 
           <div className="images-section">
             <h3>Immagini:</h3>
+
             <div className="image-grid">
-              {poiData.properties.images.map((image) => (
-                <div key={image._id} className="image-item">
-                  <img src={image.url} alt={image.name} />
+              {poiData.properties.images.map((imageUrl, index) => (
+                <div key={index} className="image-item">
+                  <img
+                    src={`${imageUrl}`}
+                    alt=""
+                  />
                   <button
                     type="button"
                     className="delete-image-button"
-                    onClick={() => handleDeleteImage(image._id)}
+                    onClick={() => handleDeleteImage(imageUrl)}
+                    style={{
+                      position: "absolute",
+                      top: "5px",
+                      right: "5px",
+                      backgroundColor: "red",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "24px",
+                      height: "24px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "14px",
+                    }}
                   >
-                    Elimina
+                    ×
                   </button>
                 </div>
               ))}
@@ -134,24 +159,20 @@ const ShowPoiComponent = ({ poi, onClose }) => {
                 type="file"
                 accept="image/*"
                 onChange={handleFileChange}
+                multiple // Consente la selezione di più file
               />
               <button
                 type="button"
                 onClick={handleImageUpload}
-                disabled={!newImage}
+                disabled={newImages.length === 0} // Disabilita il pulsante se non ci sono nuove immagini
               >
                 Upload
               </button>
             </div>
           </div>
 
-
           <div className="form-actions">
-            <button
-              type="submit"
-              disabled={isSaving}
-              className="save-button"
-            >
+            <button type="submit" disabled={isSaving} className="save-button">
               {isSaving ? "Salvando..." : "Salva"}
             </button>
           </div>
