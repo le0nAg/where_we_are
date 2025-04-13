@@ -73,7 +73,6 @@ Questo progetto è distribuito sotto licenza **GPL-3.0**.
 - **Andrea Gonzo Dellaidotti**
 - **[Filippo Favaron](https://github.com/FiloFav)**
 
-Se hai dato il tuo contributo, non esitare ad aggiungere il tuo nome! 🎉
 
 ---
 
