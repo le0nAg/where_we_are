@@ -1,7 +1,6 @@
 const User = require("../models/operatorModel");
 const jwt = require("jsonwebtoken");
 
-//TODO: la best practice prevederebbe di richiedere un access token anche se scaduto per verificare se il refresh token minting e steling
 //The user is authenticated using a refresh token
 module.exports.userAuthnCookieBased = (req, res, next) => {
   const token = req.cookies.token; 

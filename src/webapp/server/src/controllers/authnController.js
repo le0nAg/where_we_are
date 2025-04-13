@@ -1,15 +1,15 @@
-const User = require("../models/operatorModel");
+const Operator = require("../models/operatorModel");
 const { createSecretToken, createRefreshToken, verifySecretToken, verifyRefreshToken } = require("../utils/jwtUtils");
 const argon2 = require('argon2');
 
 module.exports.Signup = async (req, res, next) => {
   try {
     const { email, password, username, createdAt } = req.body;
-    const existingUser = await User.findOne({ email });
+    const existingUser = await Operator.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
-    const user = await User.create({ email, password, username, createdAt });
+    const user = await Operator.create({ email, password, username, createdAt });
     const token = createSecretToken(user._id);
     res.cookie("token", token, {
       withCredentials: true,
@@ -33,7 +33,7 @@ module.exports.Login = async (req, res, next) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    const user = await User.findOne({ email });
+    const user = await Operator.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -118,3 +118,4 @@ module.exports.CheckAuth = async (req, res) => {
     res.status(401).json({ isAuthenticated: false });
   }
 };
+

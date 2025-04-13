@@ -6,9 +6,14 @@ const cors = require('cors');
 const authRoute = require("./routes/authnRoute");
 const appRoute = require("./routes/appRoutes");
 
-dotenv.config();
+dotenv.config({
+  path: path.resolve(__dirname, `.env`),
+});
 
 const env = process.env.NODE_ENV || 'dev';
+
+console.log("dirname: "+__dirname)
+console.log("\n\n::node env::"+process.env.NODE_ENV+"\n\n");
 
 dotenv.config({
   path: path.resolve(__dirname, `.env.${env}`),
@@ -35,8 +40,6 @@ mongoose.connect(process.env.ATLAS_URI, {
 app.get('/', (req, res) => {
   res.send('Server is running!');
 });
-
-
 
 app.use(authRoute);
 app.use(appRoute);
