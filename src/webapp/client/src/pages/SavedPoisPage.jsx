@@ -1,10 +1,16 @@
-import { useAuthnContext } from '../context/AuthnContext'; 
-import { useFetchSavedPois } from '../hooks/useFetchSavedPois'; 
+import { useAuthnContext } from '../hooks/useAuthnContext';
+import { useFetchSavedPois } from '../hooks/useFetchSavedPois';
 
 const SavedPoisPage = () => {
     const { user } = useAuthnContext();
     const { data, loading, error } = useFetchSavedPois(user._id);
     
+    if(error){
+      return (
+        <div> error </div>
+      )
+    }
+
     return (
       <div>
         <h1>Your Saved Points of Interest</h1>
@@ -25,4 +31,4 @@ const SavedPoisPage = () => {
     );
   };
 
-export default SavedPoisPage;
+  export default SavedPoisPage;

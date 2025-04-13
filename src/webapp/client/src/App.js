@@ -1,87 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { Route, Routes, BrowserRouter, Navigate } from "react-router-dom";
+import React from "react";
+import { Route, Routes, BrowserRouter } from "react-router-dom";
 import MapPage from "./pages/MapPage";
 import PoiManagementPage from "./pages/PoiManagementPage";
 import Login from "./pages/authn/Login";
-import Settings from "./pages/Settings";
+import SavedPoisPage from "./pages/SavedPoisPage";
 import "./css/app.css";
+import  AuthnProvider  from "../src/context/AuthnContext";
+// import { AuthnContext } from '../context/AuthnContext';
+import { ProtectedRoute, OperatorRoute } from "./components/ProtectedRoute";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); 
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/authn/check-auth", {
-          credentials: "include",
-        });
-
-        const data = await response.json();
-        setIsAuthenticated(data.isAuthenticated);
-      } catch (error) {
-        console.error("Error checking auth:", error);
-        setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  if (isLoading) {
-    // TODO: styling
-    return <div>Loading...</div>;
-  }
-
   return (
     <BrowserRouter>
-      <div className="app">
-        <div className="content">
-          <Routes>
-            <Route path="/map" element={<MapPage />} />
-
-            <Route
-              path="/login"
-              element={<Login setIsAuthenticated={setIsAuthenticated} />}
-            />
-
-            <Route
-              path="/poi-management"
-              element={
-                isAuthenticated ? (
-                  <PoiManagementPage />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-
-            <Route
-              path="/settings"
-              element={
-                isAuthenticated ? (
-                  <Settings />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-
-            <Route
-              path="/"
-              element={
-                isAuthenticated ? (
-                  <Navigate to="/poi-management" />
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
-          </Routes>
-        </div>
-      </div>
+      <AuthnProvider>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<MapPage />} />
+          <Route path="/login" element={<Login />} />
+          
+          {/* User-only Routes */}
+          <Route path="/saved-pois" element={
+            <ProtectedRoute>
+              <SavedPoisPage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Operator-only Routes */}
+          <Route path="/poi-management" element={
+            <OperatorRoute>
+              <PoiManagementPage />
+            </OperatorRoute>
+          } />
+          
+          {/* Other routes */}
+        </Routes>
+      </AuthnProvider>
     </BrowserRouter>
   );
 }

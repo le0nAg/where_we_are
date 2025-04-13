@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './css/index.css';
 import App from './App';
 // import reportWebVitals from './reportWebVitals';
-import {  AuthProvider } from './context/AuthnContext';
+// import {  AuthProvider } from './context/AuthnContext';
 //export {default as Login} from './pages/authn/Login';
 //export {default as Signup} from './authn/Signup'; not exposed by design
 
@@ -14,9 +14,7 @@ import {  AuthProvider } from './context/AuthnContext';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AuthProvider>  
       <App />
-    </AuthProvider>
   </React.StrictMode>
 );
 

@@ -50,3 +50,5 @@ const ItineraryModal = ({ onClose }) => {
       </div>
     );
   };
+
+export default ItineraryModal;
