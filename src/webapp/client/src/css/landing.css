@@ -1,0 +1,126 @@
+.landing-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url("../images/trento.png");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  
+  .landing-card {
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    max-width: 700px;
+    z-index: 2;
+  }
+  
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .app-logo {
+    height: 60px;
+    width: 60px;
+    background: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .app-title {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .app-description {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .feature-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+  .feature-icon {
+    background-color: #007bff;
+    padding: 8px;
+    border-radius: 50%;
+    margin-right: 15px;
+  }
+  
+  .feature-text {
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .login-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .operator-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .operator-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .user-button {
+    background-color: #ffffff;
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .user-button:hover {
+    background-color: #f8f9fa;
+    border-color: #0056b3;
+    color: #0056b3;
+  }
+  
+  .footer {
+    position: absolute;
+    bottom: 20px;
+    text-align: center;
+    width: 100%;
+    color: white;
+    z-index: 2;
+  }

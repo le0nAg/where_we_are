@@ -8,6 +8,7 @@ import "./css/app.css";
 import  AuthnProvider  from "../src/context/AuthnContext";
 // import { AuthnContext } from '../context/AuthnContext';
 import { ProtectedRoute, OperatorRoute } from "./components/ProtectedRoute";
+import Landing from "./pages/Landing";
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
       <AuthnProvider>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<MapPage />} />
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           
           {/* User-only Routes */}
