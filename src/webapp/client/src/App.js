@@ -9,32 +9,22 @@ import  AuthnProvider  from "../src/context/AuthnContext";
 // import { AuthnContext } from '../context/AuthnContext';
 import { ProtectedRoute, OperatorRoute } from "./components/ProtectedRoute";
 import Landing from "./pages/Landing";
+import StatisticalPage from "./pages/StatisticalPage";
 
 function App() {
   return (
     <BrowserRouter>
       <AuthnProvider>
         <Routes>
-          {/* Public Routes */}
+          
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/stats" element={<StatisticalPage />} />
           
-          {/* User-only Routes */}
-          <Route path="/saved-pois" element={
-            <ProtectedRoute>
-              <SavedPoisPage />
-            </ProtectedRoute>
-          } />
+          {/* TODO: PROTECT THE ROUTE */}
+          <Route path="/poi-management" element={<PoiManagementPage />} />
           
-          {/* Operator-only Routes */}
-          <Route path="/poi-management" element={
-            <OperatorRoute>
-              <PoiManagementPage />
-            </OperatorRoute>
-          } />
-          
-          {/* Other routes */}
         </Routes>
       </AuthnProvider>
     </BrowserRouter>

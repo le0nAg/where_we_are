@@ -11,3 +11,23 @@
 .popup-content {
   font-size: 14px;
 }
+
+.itinerary-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #7c3aed;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.itinerary-button:hover {
+  background-color: #6d28d9;
+}

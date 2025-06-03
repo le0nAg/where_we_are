@@ -104,7 +104,7 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
   
       localStorage.removeItem("accessToken");
   
-      window.location.href = "/login";
+      window.location.href = "/";
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -116,6 +116,9 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
         <div className="logo-container">
           <img src="/logo_32.png" alt="error" />
           <span className="brand-name">WhereWeAre</span>
+        </div>
+        <div className="stat-container">
+          <button className="auth-button" onClick={_ => {window.location.href = "/stats"}}>Statistiche</button>
         </div>
         <div className="auth-container">
           <button className="auth-button" onClick={handleLogout}>Logout</button>

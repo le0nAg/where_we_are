@@ -2,31 +2,35 @@
 import React, { useState } from "react";
 import MapComponent from "../components/MapComponent";
 import { useFetchPois } from "../hooks/useFetchData";
-import { useAuthnContext } from "../hooks/useAuthnContext";
-import { useSavePoi } from "../hooks/useSavePois"; 
-import ItineraryModal from "../components/ItineraryModal"; 
 import "../css/map.css";
+import PoiListReadOnlyComponent from "../components/PoiListReadOnlyComponent";
 
 const MapPage = () => {
   const { data, loading, error } = useFetchPois();
-  const { isAuthenticated, isRegularUser } = useAuthnContext();
-  const { savePoi } = useSavePoi();
-  const [showItineraryModal, setShowItineraryModal] = useState(false);
+  const [selectedPoiIds, setSelectedPoiIds] = useState([]);
 
-  const handleSavePoi = async (poiId) => {
-    if (isAuthenticated && isRegularUser) {
-      try {
-        await savePoi(poiId);
-        // Show success notification
-      } catch (error) {
-        // Handle error
-        console.error("Failed to save POI:", error);
-      }
-    }
+  const handleSelectionChange = (ids) => {
+    setSelectedPoiIds(ids);
   };
 
-  const handleItineraryPlanning = () => {
-    setShowItineraryModal(true);
+  const handleExport = async () => {
+    try {
+      const query = selectedPoiIds.map(id => `poiIds=${id}`).join("&");
+      const res = await fetch(`/api/app/default/export/pois?${query}`);
+      if (!res.ok) throw new Error("Export failed");
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "exported_pois.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("Export error:", err);
+      alert("Export failed");
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -34,26 +38,21 @@ const MapPage = () => {
 
   return (
     <div className="map-page">
-      <div className="map-header">
-        <button 
-          className="itinerary-button"
-          onClick={handleItineraryPlanning}
-        >
-          Plan Your Itinerary
-        </button>
-      </div>
+      <button 
+        className="itinerary-button"
+        onClick={() => {
+          alert("qui dovrai far vedere l'itinerario e il tasto salva");
+        }}
+      >
+        Visualizza itinerario 
+      </button>
 
-      <MapComponent 
-        data={data} 
-        canSavePois={isAuthenticated && isRegularUser}
-        onSavePoi={handleSavePoi}
+      <MapComponent data={data} />
+
+      <PoiListReadOnlyComponent 
+        pois={data}
+        onDelete={ _ => {alert("POI deleted") }}
       />
-
-      {showItineraryModal && (
-        <ItineraryModal 
-          onClose={() => setShowItineraryModal(false)} 
-        />
-      )}
     </div>
   );
 };

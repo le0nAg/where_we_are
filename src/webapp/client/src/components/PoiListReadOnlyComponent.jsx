@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { useDeletePois } from "../hooks/useDeletePois";
 import "../css/poiList.css";
 
-const PoiListComponent = ({ pois, onDelete }) => {
+const PoiListReadOnlyComponent = ({ pois }) => {
   const [selectedPois, setSelectedPois] = useState(new Set());
   const [currentImageIndexes, setCurrentImageIndexes] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-
-  const { deletePois, deleteLoading } = useDeletePois();
+  const [exportLoading, setExportLoading] = useState(false);
+  const [exportError, setExportError] = useState(null);
 
   const handleCheckboxChange = (poiId) => {
     setSelectedPois((prev) => {
@@ -36,14 +35,32 @@ const PoiListComponent = ({ pois, onDelete }) => {
     });
   };
 
-  const handleDelete = async () => {
-    const deletedPoiIds = [...selectedPois];
+  const handleExport = async () => {
+    setExportLoading(true);
+    setExportError(null);
+
+    const selected = pois.filter((poi) => selectedPois.has(poi._id));
+
     try {
-      await deletePois(deletedPoiIds);
-      onDelete(deletedPoiIds);
+      const response = await fetch("/api/export-pois", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pois: selected }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+
+      alert("POIs exported successfully.");
       setSelectedPois(new Set());
     } catch (err) {
-      console.error("Error deleting POIs:", err);
+      console.error("Export error:", err);
+      setExportError("Failed to export POIs. Please try again.");
+    } finally {
+      setExportLoading(false);
     }
   };
 
@@ -108,14 +125,16 @@ const PoiListComponent = ({ pois, onDelete }) => {
       })}
 
       <button
-        onClick={handleDelete}
-        disabled={selectedPois.size === 0 || deleteLoading}
-        className="delete-button-fixed"
+        onClick={handleExport}
+        disabled={selectedPois.size === 0 || exportLoading}
+        className="export-button-fixed"
       >
-        {deleteLoading ? "Deleting..." : `Delete Selected (${selectedPois.size})`}
+        {exportLoading ? "Exporting..." : `Export Selected (${selectedPois.size})`}
       </button>
+
+      {exportError && <div className="error-message">{exportError}</div>}
     </div>
   );
 };
 
-export default PoiListComponent;
+export default PoiListReadOnlyComponent;

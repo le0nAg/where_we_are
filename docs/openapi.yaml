@@ -231,6 +231,38 @@ paths:
         '501':
           description: Not implemented yet
 
+  /api/app/{appId}/export/pois:
+    get:
+      summary: Export selected POIs for a specific app
+      parameters:
+        - in: path
+          name: appId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: poiIds
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Exported POIs file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid POI IDs
+        '404':
+          description: App not found
+
+
 components:
   schemas:
     Operator:
