@@ -10,6 +10,8 @@ import "../css/poiManagement.css";
 import usePostPoi from "../hooks/usePostPoi";
 import PoiListComponent from "./PoiListComponent";
 import { useFetchPois } from "../hooks/useFetchData";
+import { useDeletePois } from "../hooks/useDeletePois";
+import Header from "./header";
 
 const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
   const [pois, setPois] = useState(initialPois);
@@ -21,6 +23,8 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
   const { postPoi, isLoading: isSaving, error: saveError } = usePostPoi();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { fetchPois } = useFetchPois(); 
+  const { deletePois, deleteLoading } = useDeletePois();
+
 
   const refreshPois = async () => {
     try {
@@ -35,16 +39,15 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
     refreshPois();
   }, );
 
-  const handleDeletePoi = async (deletedPoiIds) => {
+  const handleDeletePois = async (deletedPoiIds) => {
     try {
-      const updatedPois = pois.filter(poi => !deletedPoiIds.includes(poi._id));
-      setPois(updatedPois);
-
-      await refreshPois();
+      await deletePois(deletedPoiIds); // DELETE dal server
+      setPois((prev) => prev.filter((poi) => !deletedPoiIds.includes(poi._id))); // Aggiorna localmente
     } catch (err) {
-      console.error("Error updating POI list after deletion:", err);
+      console.error("Errore nella cancellazione dei POI:", err);
     }
   };
+  
 
   const handleAddPolygonClick = () => {
     setIsAddingPolygon(true);
@@ -112,18 +115,11 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
 
   return (
     <div className="poi-management-container">
-      <div className="top-bar">
-        <div className="logo-container">
-          <img src="/logo_32.png" alt="error" />
-          <span className="brand-name">WhereWeAre</span>
-        </div>
-        <div className="stat-container">
-          <button className="auth-button" onClick={_ => {window.location.href = "/stats"}}>Statistiche</button>
-        </div>
-        <div className="auth-container">
-          <button className="auth-button" onClick={handleLogout}>Logout</button>
-        </div>
-      </div>
+      <Header>
+        <button className="auth-button" onClick={() => window.location.href = "/stats"}>Statistiche</button>
+        <button className="auth-button" onClick={handleLogout}>Logout</button>
+      </Header>
+
 
       <div className={`poi-sidebar ${sidebarOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
         <div className="sidebar-controls">
@@ -131,7 +127,11 @@ const PoiManagementComponent = ({ pois: initialPois, onAddPolygon }) => {
             ☰
           </button>
         </div>
-        <PoiListComponent pois={pois} onDelete={handleDeletePoi} />
+        <PoiListComponent
+          pois={pois}
+          onAction={handleDeletePois}
+          selectedButtonName="Elimina"
+        />
       </div>
 
       <MapContainer center={[46.0667, 11.1211]} zoom={14} className="map-container">

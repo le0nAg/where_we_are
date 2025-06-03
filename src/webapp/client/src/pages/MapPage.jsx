@@ -3,41 +3,20 @@ import React, { useState } from "react";
 import MapComponent from "../components/MapComponent";
 import { useFetchPois } from "../hooks/useFetchData";
 import "../css/map.css";
-import PoiListReadOnlyComponent from "../components/PoiListReadOnlyComponent";
+import PoiListComponent from "../components/PoiListComponent";
+import Header from '../components/header';
 
 const MapPage = () => {
   const { data, loading, error } = useFetchPois();
-  const [selectedPoiIds, setSelectedPoiIds] = useState([]);
-
-  const handleSelectionChange = (ids) => {
-    setSelectedPoiIds(ids);
-  };
-
-  const handleExport = async () => {
-    try {
-      const query = selectedPoiIds.map(id => `poiIds=${id}`).join("&");
-      const res = await fetch(`/api/app/default/export/pois?${query}`);
-      if (!res.ok) throw new Error("Export failed");
-
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "exported_pois.json";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (err) {
-      console.error("Export error:", err);
-      alert("Export failed");
-    }
-  };
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
+
   return (
     <div className="map-page">
+      <Header />
       <button 
         className="itinerary-button"
         onClick={() => {
@@ -47,12 +26,22 @@ const MapPage = () => {
         Visualizza itinerario 
       </button>
 
+      <div className={`poi-sidebar ${sidebarOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
+        <div className="sidebar-controls">
+          <button className="toggle-sidebar-button" onClick={() => setSidebarOpen(!sidebarOpen)}>
+            ☰
+          </button>
+        </div>
+        <PoiListComponent 
+          pois={data}
+          onAction={ _ => {alert("POI to save") }}
+          selectedButtonName="Salva"
+        />
+      </div>
+      
+
       <MapComponent data={data} />
 
-      <PoiListReadOnlyComponent 
-        pois={data}
-        onDelete={ _ => {alert("POI deleted") }}
-      />
     </div>
   );
 };

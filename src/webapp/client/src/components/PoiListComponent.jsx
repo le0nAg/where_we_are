@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { useDeletePois } from "../hooks/useDeletePois";
 import "../css/poiList.css";
 
-const PoiListComponent = ({ pois, onDelete }) => {
+const PoiListComponent = ({
+  pois,
+  onAction,
+  selectedButtonName = "Esegui Azione"
+}) => {
   const [selectedPois, setSelectedPois] = useState(new Set());
   const [currentImageIndexes, setCurrentImageIndexes] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-
-  const { deletePois, deleteLoading } = useDeletePois();
 
   const handleCheckboxChange = (poiId) => {
     setSelectedPois((prev) => {
@@ -36,14 +38,13 @@ const PoiListComponent = ({ pois, onDelete }) => {
     });
   };
 
-  const handleDelete = async () => {
-    const deletedPoiIds = [...selectedPois];
+  const handleAction = async () => {
+    const selectedIds = [...selectedPois];
     try {
-      await deletePois(deletedPoiIds);
-      onDelete(deletedPoiIds);
+      await onAction(selectedIds);
       setSelectedPois(new Set());
     } catch (err) {
-      console.error("Error deleting POIs:", err);
+      console.error("Error executing action on POIs:", err);
     }
   };
 
@@ -108,14 +109,23 @@ const PoiListComponent = ({ pois, onDelete }) => {
       })}
 
       <button
-        onClick={handleDelete}
-        disabled={selectedPois.size === 0 || deleteLoading}
+        onClick={handleAction}
+        disabled={selectedPois.size === 0}
         className="delete-button-fixed"
+        style={{
+          backgroundColor: selectedButtonName === "Salva" ? "#4CAF50" : "#f44336",
+          color: "white",
+          padding: "10px 20px",
+          border: "none",
+          borderRadius: "5px",
+          cursor: selectedPois.size > 0 ? "pointer" : "not-allowed",
+        }}
       >
-        {deleteLoading ? "Deleting..." : `Delete Selected (${selectedPois.size})`}
+        {`${selectedButtonName} (${selectedPois.size})`}
       </button>
     </div>
   );
 };
+
 
 export default PoiListComponent;

@@ -3,7 +3,6 @@ import { Route, Routes, BrowserRouter } from "react-router-dom";
 import MapPage from "./pages/MapPage";
 import PoiManagementPage from "./pages/PoiManagementPage";
 import Login from "./pages/authn/Login";
-import SavedPoisPage from "./pages/SavedPoisPage";
 import "./css/app.css";
 import  AuthnProvider  from "../src/context/AuthnContext";
 // import { AuthnContext } from '../context/AuthnContext';
