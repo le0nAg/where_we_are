@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { MapContainer, TileLayer, Polygon, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -13,6 +13,8 @@ L.Icon.Default.mergeOptions({
 });
 
 const MapComponent = ({ data }) => {
+  const [feedback, setFeedback] = useState({});
+
   // Filtra per le feature di tipo area (geometria Polygon e, eventualmente, categoria "area")
   const areas = data.filter(
     (poi) =>
@@ -20,12 +22,20 @@ const MapComponent = ({ data }) => {
       poi.properties.category === "area"
   );
 
+  const handleFeedback = (areaIndex, type) => {
+    setFeedback(prev => ({
+      ...prev,
+      [areaIndex]: type
+    }));
+
+    alert(`Feedback for area ${areaIndex}: ${type}`);
+  };
+
   return (
     <MapContainer
       className="map-container-map"
       center={[46.0667, 11.1211]}
       zoom={14}
-      //style={{ width: "100%", height: "100vh" }}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -47,10 +57,24 @@ const MapComponent = ({ data }) => {
               <img
                 key={i}
                 src={image}
-                alt={`${i}`}
+                alt=""
                 style={{ width: "100px", margin: "5px" }}
               />
             ))}
+            <div className="feedback-buttons-container">
+              <button
+                onClick={() => handleFeedback(index, 'like')}
+                className={`feedback-button like ${feedback[index] === 'like' ? 'active' : ''}`}
+              >
+                Like
+              </button>
+              <button
+                onClick={() => handleFeedback(index, 'dislike')}
+                className={`feedback-button dislike ${feedback[index] === 'dislike' ? 'active' : ''}`}
+              >
+                Dislike
+              </button>
+            </div>
           </Popup>
         </Polygon>
       ))}

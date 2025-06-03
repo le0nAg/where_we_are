@@ -16,15 +16,6 @@ const MapPage = () => {
 
   return (
     <div className="map-page">
-      <Header />
-      <button 
-        className="itinerary-button"
-        onClick={() => {
-          alert("qui dovrai far vedere l'itinerario e il tasto salva");
-        }}
-      >
-        Visualizza itinerario 
-      </button>
 
       <div className={`poi-sidebar ${sidebarOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
         <div className="sidebar-controls">
@@ -38,7 +29,6 @@ const MapPage = () => {
           selectedButtonName="Salva"
         />
       </div>
-      
 
       <MapComponent data={data} />
 
