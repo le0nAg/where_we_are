@@ -18,6 +18,7 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/map" element={<MapPage />} />
           
           {/* User-only Routes */}
           <Route path="/saved-pois" element={
