@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as Chart from 'chart.js';
 import Header from '../components/header';
-import '../css/stat.css'; 
-
+import '../css/stat.css';
 
 const StatisticalPage = () => {
   const [selectedPoi, setSelectedPoi] = useState('Piazza Dante');
@@ -31,9 +30,7 @@ const StatisticalPage = () => {
   const pieChartInstance = useRef(null);
 
   useEffect(() => {
-    // Register Chart.js components
     Chart.Chart.register(...Chart.registerables);
-    
     fetchPois();
     fetchDashboardData();
     
@@ -86,7 +83,6 @@ const StatisticalPage = () => {
   };
 
   const createCharts = () => {
-    // Destroy existing charts
     if (lineChartInstance.current) {
       lineChartInstance.current.destroy();
     }
@@ -94,7 +90,6 @@ const StatisticalPage = () => {
       pieChartInstance.current.destroy();
     }
 
-    // Create Line Chart
     if (lineChartRef.current) {
       const ctx = lineChartRef.current.getContext('2d');
       lineChartInstance.current = new Chart.Chart(ctx, {
@@ -160,7 +155,6 @@ const StatisticalPage = () => {
       });
     }
 
-    // Create Pie Chart
     if (pieChartRef.current) {
       const ctx = pieChartRef.current.getContext('2d');
       pieChartInstance.current = new Chart.Chart(ctx, {
@@ -207,111 +201,96 @@ const StatisticalPage = () => {
     'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
   ];
 
-
   const handleLogout = async () => {
     try {
       await fetch("/api/authn/logout", {
         method: "POST",
         credentials: "include",
       });
-  
       localStorage.removeItem("accessToken");
-  
       window.location.href = "/";
     } catch (error) {
       console.error("Logout failed:", error);
     }
-  };  
+  };
 
   return (
     <>
-    
       <Header>
         <button className="auth-button" onClick={() => window.location.href = "/poi-management"}>Gestionale</button>
         <button className="auth-button" onClick={handleLogout}>Logout</button>
-      </Header>    
-
+      </Header>
+      
       <div className="stat-container">
-        <div className="max-w-7xl mx-auto">
-
-          <div className="mb-8">
-            <select 
-              value={selectedPoi}
-              onChange={(e) => setSelectedPoi(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-lg font-medium bg-white"
-            >
-              {pois.map(poi => (
-                <option key={poi._id} value={poi.properties.name}>
-                  {poi.properties.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-medium text-gray-700 mb-2">Visite totali:</h3>
-              <p className="text-3xl font-bold text-gray-900">{dashboardData.totalVisits}</p>
+        <div className="max-w-7xl">
+          
+          
+          <div className="stats-grid">
+            <select
+                value={selectedPoi}
+                onChange={(e) => setSelectedPoi(e.target.value)}
+                className="main-select"
+              >
+                {pois.map(poi => (
+                  <option key={poi._id} value={poi.properties.name}>
+                    {poi.properties.name}
+                  </option>
+                ))}
+              </select>
+            <div className="stats-card">
+              <h3>Visite totali:</h3>
+              <p>{dashboardData.totalVisits}</p>
             </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-medium text-gray-700 mb-2">Gradimento complessivo:</h3>
-              <p className="text-3xl font-bold text-gray-900">{dashboardData.satisfactionRate}%</p>
+            <div className="stats-card">
+              <h3>Gradimento complessivo:</h3>
+              <p>{dashboardData.satisfactionRate}%</p>
             </div>
           </div>
 
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Line Chart */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-medium text-gray-700">Andamento visite annuale</h3>
-                <select 
+          <div className="charts-grid">
+            <div className="chart-container">
+              <div className="chart-header">
+                <h3>Andamento visite annuale</h3>
+                <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="px-3 py-1 border border-gray-300 rounded-md bg-white"
+                  className="custom-select"
                 >
                   {years.map(year => (
                     <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
               </div>
-              
-              <div className="h-80">
+              <div className="chart-canvas">
                 <canvas ref={lineChartRef}></canvas>
               </div>
             </div>
 
-            {/* Pie Chart */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-medium text-gray-700">Indice di gradimento mese:</h3>
-                <select 
+            <div className="chart-container">
+              <div className="chart-header">
+                <h3>Indice di gradimento mese:</h3>
+                <select
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
-                  className="px-3 py-1 border border-gray-300 rounded-md bg-white"
+                  className="custom-select"
                 >
                   {months.map(month => (
                     <option key={month} value={month}>{month}</option>
                   ))}
                 </select>
               </div>
-              
-              <div className="h-80 flex flex-col">
-                <div className="flex-1">
+              <div className="pie-chart-container">
+                <div className="pie-chart-canvas">
                   <canvas ref={pieChartRef}></canvas>
                 </div>
-                
-                {/* Legend */}
-                <div className="flex justify-center mt-4 space-x-6">
+                <div className="chart-legend">
                   {dashboardData.satisfactionData.map((entry, index) => (
-                    <div key={index} className="flex items-center">
-                      <div 
-                        className="w-3 h-3 rounded-full mr-2"
+                    <div key={index} className="legend-item">
+                      <div
+                        className="legend-color"
                         style={{ backgroundColor: entry.color }}
                       ></div>
-                      <span className="text-sm text-gray-600">
+                      <span className="legend-text">
                         {entry.name} {entry.value}%
                       </span>
                     </div>
