@@ -6,6 +6,30 @@ const User = require("../models/operatorModel");
 const PointOfInterest = require("../models/poiSchema");
 const poiStatsController = require("../controllers/poiStatsController");  
 
+
+function generateKML(pois) {
+  const placemarks = pois.map(poi => {
+    const coords = poi.geometry?.coordinates?.[0]?.[0];
+    const [lng, lat] = coords || [0, 0];
+    
+    return `    <Placemark>
+      <name>${poi.properties.name || 'Unnamed'}</name>
+      <description>${poi.properties.description || ''}</description>
+      <Point>
+        <coordinates>${lat},${lng},0</coordinates>
+      </Point>
+    </Placemark>`;
+  }).join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>POIs Export</name>
+${placemarks}
+  </Document>
+</kml>`;
+}
+
 const multer = require("multer");
 const upload = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -168,9 +192,6 @@ router.get(`${API_PREFIX_STAT}/compare`, poiStatsController.comparePoiStats);
 
 router.get(`${API_PREFIX_STAT}/recent`, poiStatsController.getRecentActivity);
 
-const PoiStatsSchema = require('../models/poiStatsSchema');
-
-
 // gli endpoint più semplici (update dei dati: lik/dislike, visita) li gestisco con 
 // una funzione in linea
 
@@ -267,6 +288,35 @@ router.put(`${API_PREFIX_STAT}/visit/:poid`, async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+
+
+
+router.get(`${API_PREFIX}/download`, async (req, res) => {
+  try {
+    const { pois } = req.query;
+    
+    if (!pois) {
+      return res.status(400).json({ message: "Missing 'pois' parameter" });
+    }
+
+    const poiIds = pois.split(',').filter(id => id.trim());
+    const foundPois = await PointOfInterest.find({ _id: { $in: poiIds } });
+
+    if (foundPois.length === 0) {
+      return res.status(404).json({ message: "No POIs found" });
+    }
+
+    const kml = generateKML(foundPois);
+
+    res.setHeader('Content-Type', 'application/vnd.google-earth.kml+xml');
+    res.setHeader('Content-Disposition', `attachment; filename="pois.kml"`);
+    res.send(kml);
+
+  } catch (error) {
+    res.status(500).json({ message: "Failed to generate KML" });
   }
 });
 

@@ -13,7 +13,29 @@ const MapPage = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-
+  //handler per interrogare il backend per il download del KML
+  const downloadKML = async (selectedPois) => {
+    try {
+      console.log(selectedPois);
+      const poiIds = selectedPois.map(poi => poi).join(',');
+      const response = await fetch(`/api/app/download?pois=${poiIds}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to download KML');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'pois.kml';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert('Error downloading KML: ' + error.message);
+    }
+  };
+  
   return (
     <div className="map-page">
 
@@ -23,9 +45,9 @@ const MapPage = () => {
             ☰
           </button>
         </div>
-        <PoiListComponent 
+        <PoiListComponent
           pois={data}
-          onAction={ _ => {alert("POI to save") }}
+          onAction={downloadKML}
           selectedButtonName="Salva"
         />
       </div>
