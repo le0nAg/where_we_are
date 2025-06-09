@@ -4,6 +4,7 @@ const { userAuthnBearerBased } = require("../middlewares/authMiddleware");
 const { getIdFromReq } = require("../utils/jwtUtils");
 const User = require("../models/operatorModel");
 const PointOfInterest = require("../models/poiSchema");
+const poiStatsController = require("../controllers/poiStatsController");  
 
 const multer = require("multer");
 const upload = multer.diskStorage({
@@ -21,7 +22,7 @@ const uploadMiddleware = multer({ storage: upload }).array('files');
 const util = require('util');
 
 const API_PREFIX = "/api/app"
-
+const API_PREFIX_STAT = "/api/stat"
 
 router.get(`${API_PREFIX}/getAllPois`, async (req, res) => {
   const pois = await PointOfInterest.find();
@@ -146,5 +147,48 @@ router.delete(`${API_PREFIX}/images/:imageUrl`, async (req, res) => {
     res.status(500).json({ message: "Failed to delete image" });
   }
 });
+
+router.get(`${API_PREFIX_STAT}/stats`, poiStatsController.getAllPoiStats);
+
+router.get(`${API_PREFIX_STAT}/poi/:poiId`, poiStatsController.getPoiStats);
+
+router.get(`${API_PREFIX_STAT}/bulk`, poiStatsController.getBulkPoiStats);
+
+router.get(`${API_PREFIX_STAT}/summary`, poiStatsController.getStatsSummary);
+
+router.get(`${API_PREFIX_STAT}/visits`, poiStatsController.getVisitAnalytics);
+
+router.get(`${API_PREFIX_STAT}/ratings`, poiStatsController.getRatingAnalytics);
+
+router.get(`${API_PREFIX_STAT}/top`, poiStatsController.getTopPois);
+
+router.get(`${API_PREFIX_STAT}/compare`, poiStatsController.comparePoiStats);
+
+router.get(`${API_PREFIX_STAT}/recent`, poiStatsController.getRecentActivity);
+
+router.put(`${API_PREFIX_STAT}/like/:poid`, async (req, res) => {
+
+});
+
+router.put(`${API_PREFIX_STAT}/visit/:poid`, async (req, res) => {
+
+});
+
+
+router.get(`${API_PREFIX}/user`, userAuthnBearerBased, async (req, res) => {
+  try {
+    const userId = getIdFromReq(req);
+    const user = await User.findById(userId).select('-password -__v');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+} 
+);
+
 
 module.exports = router;
