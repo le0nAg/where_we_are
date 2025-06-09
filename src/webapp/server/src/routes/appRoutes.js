@@ -170,6 +170,10 @@ router.put(`${API_PREFIX_STAT}/like/:poid`, async (req, res) => {
 
 });
 
+router.put(`${API_PREFIX_STAT}/unlike/:poid`, async (req, res) => {
+
+});
+
 router.put(`${API_PREFIX_STAT}/visit/:poid`, async (req, res) => {
 
 });
