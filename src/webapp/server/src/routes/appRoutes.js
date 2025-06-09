@@ -148,6 +148,8 @@ router.delete(`${API_PREFIX}/images/:imageUrl`, async (req, res) => {
   }
 });
 
+// gli endpoint più complessi (quelli per l'interrogazione dei dati)
+// li gestisco con un controller (comeper l'auth)
 router.get(`${API_PREFIX_STAT}/stats`, poiStatsController.getAllPoiStats);
 
 router.get(`${API_PREFIX_STAT}/poi/:poiId`, poiStatsController.getPoiStats);
@@ -166,16 +168,106 @@ router.get(`${API_PREFIX_STAT}/compare`, poiStatsController.comparePoiStats);
 
 router.get(`${API_PREFIX_STAT}/recent`, poiStatsController.getRecentActivity);
 
+const PoiStatsSchema = require('../models/poiStatsSchema');
+
+
+// gli endpoint più semplici (update dei dati: lik/dislike, visita) li gestisco con 
+// una funzione in linea
+
+// aggiungo un like al poi
 router.put(`${API_PREFIX_STAT}/like/:poid`, async (req, res) => {
+  try {
+    const { poid } = req.params;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
 
+    const poiStats = await PoiStatsSchema.findOneAndUpdate(
+      { poiId: poid },
+      {
+        $inc: { 'rating.upvotes': 1 },
+        $setOnInsert: { poiId: poid, visits: [] }
+      },
+      { upsert: true, new: true }
+    );
+
+    //aggiorno le stats del mese
+    await PoiStatsSchema.updateOne(
+      { poiId: poid, 'ratingMensile.year': year, 'ratingMensile.month': month },
+      { $inc: { 'ratingMensile.$.upvotes': 1 } }
+    );
+
+    await PoiStatsSchema.updateOne(
+      { poiId: poid, 'ratingMensile.year': { $ne: year }, 'ratingMensile.month': { $ne: month } },
+      { $push: { ratingMensile: { year, month, upvotes: 1, downvotes: 0 } } }
+    );
+
+    res.json({
+      success: true,
+      data: { poiId: poid, upvotes: poiStats.rating.upvotes, downvotes: poiStats.rating.downvotes }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
+// aggiungo un unlike a POI
 router.put(`${API_PREFIX_STAT}/unlike/:poid`, async (req, res) => {
+  try {
+    const { poid } = req.params;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
 
+    const poiStats = await PoiStatsSchema.findOneAndUpdate(
+      { poiId: poid },
+      {
+        $inc: { 'rating.downvotes': 1 },
+        $setOnInsert: { poiId: poid, visits: [] }
+      },
+      { upsert: true, new: true }
+    );
+
+    await PoiStatsSchema.updateOne(
+      { poiId: poid, 'ratingMensile.year': year, 'ratingMensile.month': month },
+      { $inc: { 'ratingMensile.$.downvotes': 1 } }
+    );
+
+    await PoiStatsSchema.updateOne(
+      { poiId: poid, 'ratingMensile.year': { $ne: year }, 'ratingMensile.month': { $ne: month } },
+      { $push: { ratingMensile: { year, month, upvotes: 0, downvotes: 1 } } }
+    );
+
+    res.json({
+      success: true,
+      data: { poiId: poid, upvotes: poiStats.rating.upvotes, downvotes: poiStats.rating.downvotes }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
+// aggiungo la visita ad un POI
 router.put(`${API_PREFIX_STAT}/visit/:poid`, async (req, res) => {
+  try {
+    const { poid } = req.params;
 
+    const poiStats = await PoiStatsSchema.findOneAndUpdate(
+      { poiId: poid },
+      {
+        $push: { visits: { timestamp: new Date() } },
+        $setOnInsert: { rating: { upvotes: 0, downvotes: 0 }, ratingMensile: [] }
+      },
+      { upsert: true, new: true }
+    );
+
+    res.json({
+      success: true,
+      data: { poiId: poid, totalVisits: poiStats.visits.length }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 });
 
 

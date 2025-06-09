@@ -4,23 +4,18 @@ import Header from '../components/header';
 import '../css/stat.css';
 
 const StatisticalPage = () => {
-  const [selectedPoi, setSelectedPoi] = useState('Piazza Dante');
+  const [selectedPoi, setSelectedPoi] = useState('');
+  const [selectedPoiId, setSelectedPoiId] = useState('');
   const [selectedYear, setSelectedYear] = useState('2024');
   const [selectedMonth, setSelectedMonth] = useState('Marzo');
   const [pois, setPois] = useState([]);
   const [dashboardData, setDashboardData] = useState({
-    totalVisits: 2358,
-    satisfactionRate: 74,
-    monthlyVisits: [
-      { month: 'Gen', visits: 1600 },
-      { month: 'Feb', visits: 1200 },
-      { month: 'Mar', visits: 1550 },
-      { month: 'Apr', visits: 1400 },
-      { month: 'Mag', visits: 2400 }
-    ],
+    totalVisits: 0,
+    satisfactionRate: 0,
+    monthlyVisits: [],
     satisfactionData: [
-      { name: 'Apprezzato', value: 79, color: '#4FC3F7' },
-      { name: 'Non apprezzato', value: 21, color: '#1565C0' }
+      { name: 'Apprezzato', value: 0, color: '#4FC3F7' },
+      { name: 'Non apprezzato', value: 0, color: '#1565C0' }
     ]
   });
 
@@ -32,7 +27,6 @@ const StatisticalPage = () => {
   useEffect(() => {
     Chart.Chart.register(...Chart.registerables);
     fetchPois();
-    fetchDashboardData();
     
     return () => {
       if (lineChartInstance.current) {
@@ -45,8 +39,10 @@ const StatisticalPage = () => {
   }, []);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, [selectedPoi, selectedYear, selectedMonth]);
+    if (selectedPoiId) {
+      fetchDashboardData();
+    }
+  }, [selectedPoiId, selectedYear, selectedMonth]);
 
   useEffect(() => {
     createCharts();
@@ -54,32 +50,112 @@ const StatisticalPage = () => {
 
   const fetchPois = async () => {
     try {
-      const response = await fetch('/api/pois');
+      const response = await fetch('/api/app/getAllPois');
       const data = await response.json();
       setPois(data);
+      
+      // Set first POI as default if available
+      if (data.length > 0) {
+        setSelectedPoi(data[0].properties.name);
+        setSelectedPoiId(data[0]._id);
+      }
     } catch (error) {
       console.error('Error fetching POIs:', error);
-      setPois([
-        { _id: '1', properties: { name: 'Piazza Dante' } },
-        { _id: '2', properties: { name: 'Piazza San Marco' } },
-        { _id: '3', properties: { name: 'Colosseo' } }
-      ]);
     }
   };
 
   const fetchDashboardData = async () => {
     try {
-      const params = new URLSearchParams({
-        poi: selectedPoi,
-        year: selectedYear,
-        month: selectedMonth
-      });
-      const response = await fetch(`/api/poi-analytics?${params}`);
-      const data = await response.json();
-      setDashboardData(data);
+      // Fetch stats for the selected POI
+      const response = await fetch(`/api/stat/poi/${selectedPoiId}?populate=true`);
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        const poiStats = result.data;
+
+        // visite tolati
+        const totalVisits = poiStats.visits ? poiStats.visits.length : 0;
+        
+        // indice di soddisfazione
+        const upvotes = poiStats.rating?.upvotes || 0;
+        const downvotes = poiStats.rating?.downvotes || 0;
+        const totalVotes = upvotes + downvotes;
+        const satisfactionRate = totalVotes > 0 ? Math.round((upvotes / totalVotes) * 100) : 0;
+        console.log(downvotes);
+
+        // dati per mese
+        const monthlyVisits = processMonthlyData(poiStats.visits, selectedYear);
+        
+        const monthNumber = months.indexOf(selectedMonth) + 1;
+        const monthlyRating = poiStats.ratingMensile?.find(
+          r => r.year === parseInt(selectedYear) && r.month === monthNumber
+        );
+        
+        //TODO: rimetti a 0 il 10 e il 5 
+        const monthlyUpvotes = monthlyRating?.upvotes || 10;
+        const monthlyDownvotes = monthlyRating?.downvotes || 5;
+        const monthlyTotal = monthlyUpvotes + monthlyDownvotes;
+        
+        const satisfactionData = monthlyTotal > 0 ? [
+          { 
+            name: 'Apprezzato', 
+            value: Math.round((monthlyUpvotes / monthlyTotal) * 100), 
+            color: '#4FC3F7' 
+          },
+          { 
+            name: 'Non apprezzato', 
+            value: Math.round((monthlyDownvotes / monthlyTotal) * 100), 
+            color: '#1565C0' 
+          }
+        ] : [
+          { name: 'Apprezzato', value: 0, color: '#4FC3F7' },
+          { name: 'Non apprezzato', value: 0, color: '#1565C0' }
+        ];
+        
+        setDashboardData({
+          totalVisits,
+          satisfactionRate,
+          monthlyVisits,
+          satisfactionData
+        });
+      } else {
+        // No data per questo POI
+        setDashboardData({
+          totalVisits: 0,
+          satisfactionRate: 0,
+          monthlyVisits: [],
+          satisfactionData: [
+            { name: 'Apprezzato', value: 0, color: '#4FC3F7' },
+            { name: 'Non apprezzato', value: 0, color: '#1565C0' }
+          ]
+        });
+      }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
+  };
+
+  const processMonthlyData = (visits, year) => {
+    const monthNames = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 
+                       'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+    
+    const monthlyData = {};
+    
+    monthNames.forEach((month, index) => {
+      monthlyData[index] = { month, visits: 0 };
+    });
+    
+    if (visits && visits.length > 0) {
+      visits.forEach(visit => {
+        const visitDate = new Date(visit.timestamp);
+        if (visitDate.getFullYear() === parseInt(year)) {
+          const monthIndex = visitDate.getMonth();
+          monthlyData[monthIndex].visits++;
+        }
+      });
+    }
+    
+    return Object.values(monthlyData);
   };
 
   const createCharts = () => {
@@ -90,7 +166,7 @@ const StatisticalPage = () => {
       pieChartInstance.current.destroy();
     }
 
-    if (lineChartRef.current) {
+    if (lineChartRef.current && dashboardData.monthlyVisits.length > 0) {
       const ctx = lineChartRef.current.getContext('2d');
       lineChartInstance.current = new Chart.Chart(ctx, {
         type: 'line',
@@ -195,7 +271,15 @@ const StatisticalPage = () => {
     }
   };
 
-  const years = ['2022', '2023', '2024'];
+  const handlePoiChange = (e) => {
+    const selectedName = e.target.value;
+    const selectedPoiObj = pois.find(poi => poi.properties.name === selectedName);
+    
+    setSelectedPoi(selectedName);
+    setSelectedPoiId(selectedPoiObj ? selectedPoiObj._id : '');
+  };
+
+  const years = ['2022', '2023', '2024', '2025'];
   const months = [
     'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
     'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
@@ -224,13 +308,13 @@ const StatisticalPage = () => {
       <div className="stat-container">
         <div className="max-w-7xl">
           
-          
           <div className="stats-grid">
             <select
                 value={selectedPoi}
-                onChange={(e) => setSelectedPoi(e.target.value)}
+                onChange={handlePoiChange}
                 className="main-select"
               >
+                <option value="">Seleziona un POI</option>
                 {pois.map(poi => (
                   <option key={poi._id} value={poi.properties.name}>
                     {poi.properties.name}

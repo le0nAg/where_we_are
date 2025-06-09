@@ -14,7 +14,7 @@ L.Icon.Default.mergeOptions({
 
 const MapComponent = ({ data }) => {
   const [feedback, setFeedback] = useState({});
-
+  // console.log(data);
   // Filtra per le feature di tipo area (geometria Polygon e, eventualmente, categoria "area")
   const areas = data.filter(
     (poi) =>
@@ -27,6 +27,25 @@ const MapComponent = ({ data }) => {
       ...prev,
       [areaIndex]: type
     }));
+    const poiId = data[areaIndex]._id;
+    const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001';
+
+    if(type === "dislike"){
+      fetch(`${baseUrl}/api/stat/unlike/${poiId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      }).catch(error => console.error('Error:', error));
+    }else if(type === "like"){
+      fetch(`${baseUrl}/api/stat/like/${poiId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      }).catch(error => console.error('Error:', error));
+    }
+
 
     alert(`Feedback for area ${areaIndex}: ${type}`);
   };

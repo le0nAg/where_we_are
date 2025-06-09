@@ -1,3 +1,7 @@
+/**
+ * File di utility per popolare il database con statistiche "fake"
+ */
+
 const mongoose = require('mongoose');
 const POI = require('./models/poiSchema');
 const POIStats = require('./models/poiStatsSchema');
