@@ -4,15 +4,7 @@ Benvenuto nel repository di **Where We Are**, un pannello operatore dedicato all
 
 ---
 
-## 🌐 Deploy
-
-🔹 **Server:** [wwa.ddns.net:5555](http://wwa.ddns.net:5555/)
-
-🔹 **Client:** [wwa.ddns.net](https://wwa.ddns.net/)
-
----
-
-## 📂 Struttura del Repository
+## Struttura del Repository
 
 Il progetto è organizzato in modo chiaro per una facile gestione:
 
@@ -29,15 +21,13 @@ LICENSE    ➝ Informazioni sulla licenza del software
 
 ---
 
-## 🔮 Funzionalità Future
+## Funzionalità Future
 
-✨ Integrazione di eventi personalizzati per i luoghi d'interesse
-
-🚴 Implementazione di mappe per il tracciamento degli spostamenti in bicicletta
++ Integrazione di eventi personalizzati per i luoghi d'interesse
 
 ---
 
-## ⚙️ Istruzioni per l'esecuzione in locale
+## ⚙Istruzioni per l'esecuzione in locale
 
 Per eseguire il progetto in locale, segui questi passaggi:
 
@@ -53,21 +43,19 @@ cd where_we_are/src/webapp/client/
 npm start
 ```
 
-### ⚠️ Attenzione sull'upload delle immagini
+###  Attenzione sull'upload delle immagini
 
 Si segnala che l'upload di immagini potrebbe presentare problemi, poiché il server è configurato per salvare i file nella directory `/uploads` della macchina locale su cui è in esecuzione. Tuttavia, non è possibile garantire automaticamente la corretta configurazione dei permessi delle cartelle sul sistema dell'utente. Si consiglia di verificare e, se necessario, modificare i permessi della cartella di destinazione per evitare errori durante il caricamento.
 
 ---
 
-## 📜 Licenza
+## Licenza
 
 Questo progetto è distribuito sotto licenza **GPL-3.0**.
 
-📖 Maggiori dettagli sono disponibili nel file di licenza incluso nel repository.
-
 ---
 
-## 👥 Contributors
+## Contributors
 
 - **[Leonardo Agostini](https://github.com/le0nAg)** 
 - **Andrea Gonzo Dellaidotti**
