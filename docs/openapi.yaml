@@ -13,20 +13,19 @@ info:
 
 tags:
   - name: operator
-    description: Operations about operator
+    description: Operazioni relative agli operatori
   - name: poi
-    description: Operations about point of interest
+    description: Operazioni relative ai punti di interesse
   - name: poi-stats
-    description: POI statistics and analytics
+    description: Statistiche e analisi sui POI
   - name: events
-    description: Event management (Planned Features)
+    description: Gestione degli eventi (Funzionalità pianificate)
 
 paths:
-  # Authentication Endpoints
   /api/authn/signup:
     post:
       tags: [operator]
-      summary: Create an operator
+      summary: Crea un operatore
       operationId: createOperator
       requestBody:
         content:
@@ -35,18 +34,18 @@ paths:
               $ref: '#/components/schemas/Operator'
       responses:
         '201':
-          description: Operator created
+          description: Operatore creato
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Operator'
         '400':
-          description: Invalid input
+          description: not valid
 
   /api/authn/login:
     post:
       tags: [operator]
-      summary: Logs operator into the system
+      summary: Effettua il login dell'operatore
       operationId: loginOperator
       requestBody:
         content:
@@ -59,24 +58,23 @@ paths:
                 password: { type: string }
       responses:
         '200':
-          description: Successful login
+          description: Login effettuato con successo
           headers:
             Authorization:
               schema: { type: string }
         '401':
-          description: Invalid credentials
+          description: Credenziali non valide
 
-  # User Profile
   /api/app/user:
     get:
       tags: [operator]
-      summary: Get current user profile
+      summary: Ottieni il profilo dell'utente corrente
       operationId: getCurrentUser
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: User profile
+          description: Profilo utente
           content:
             application/json:
               schema:
@@ -85,18 +83,18 @@ paths:
                   user:
                     $ref: '#/components/schemas/Operator'
         '401':
-          description: Unauthorized
+          description: Anauthorized
         '404':
           description: User not found
 
   /api/app/pois:
     get:
       tags: [poi]
-      summary: Get all POIs
+      summary: Ottiene tutti i POI
       operationId: getAllPois
       responses:
         '200':
-          description: List of POIs
+          description: Lista di POI
           content:
             application/json:
               schema:
@@ -104,11 +102,11 @@ paths:
                 items: 
                   $ref: '#/components/schemas/Poi'
         '404':
-          description: No POIs found
+          description: not found
     
     post:
       tags: [poi]
-      summary: Create a new POI
+      summary: Crea un nuovo POI
       operationId: addPoi
       requestBody:
         content:
@@ -117,30 +115,30 @@ paths:
               $ref: '#/components/schemas/Poi'
       responses:
         '201':
-          description: POI created
+          description: POI creato
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Poi'
         '400':
-          description: Invalid input
+          description: not valid
 
     delete:
       tags: [poi]
-      summary: Delete multiple POIs
+      summary: Elimina più POI
       operationId: deletePois
       responses:
         '204':
-          description: POIs deleted
+          description: POI eliminati
         '400':
-          description: Invalid or empty ID array
+          description: Array di ID non valido o vuoto
         '404':
-          description: No POIs found with given IDs
+          description: not found
 
   /api/app/pois/{poiId}:
     get:
       tags: [poi]
-      summary: Get a POI by ID
+      summary: Ottieni un POI tramite ID
       operationId: getPoiById
       parameters:
         - name: poiId
@@ -149,17 +147,17 @@ paths:
           schema: { type: string }
       responses:
         '200':
-          description: POI details
+          description: Dettagli del POI
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Poi'
         '404':
-          description: POI not found
+          description: POI non trovato
     
     put:
       tags: [poi]
-      summary: Update a POI
+      summary: Aggiorna un POI
       operationId: updatePoi
       parameters:
         - name: poiId
@@ -181,21 +179,20 @@ paths:
                 description: { type: string }
       responses:
         '200':
-          description: Updated POI
+          description: POI aggiornato
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Poi'
         '404':
-          description: POI not found
+          description: POI non trovato
         '400':
-          description: Invalid input
+          description: not valid
 
-  # POI Images
   /api/app/images:
     post:
       tags: [poi]
-      summary: Upload images for a POI
+      summary: Carica immagini per un POI
       operationId: uploadImages
       requestBody:
         content:
@@ -252,7 +249,7 @@ paths:
   /api/app/download:
     get:
       tags: [poi]
-      summary: Export POIs as KML
+      summary: Esporta POI in formato KML
       operationId: exportPoisKML
       parameters:
         - name: pois
@@ -277,11 +274,11 @@ paths:
         '400':
           description: Missing 'pois' parameter
         '404':
-          description: No POIs found
+          description: not found
         '500':
           description: Failed to generate KML
 
-  # POI Statistics - General
+  # ENDPOINTS PER LE STATISTICHE POI 
   /api/stat/stats:
     get:
       tags: [poi-stats]
@@ -289,7 +286,7 @@ paths:
       operationId: getAllPoiStats
       responses:
         '200':
-          description: All POI statistics
+          description: recupera tutte le statistiche dei POI
           content:
             application/json:
               schema:
@@ -479,7 +476,7 @@ paths:
                     downvotes: { type: integer }
 
   # POI Interactions
-  /api/stat/pois/{poiId}/like:
+  /api/stat/pois/like/{poiId}:
     put:
       tags: [poi-stats]
       summary: Add a like to a POI
@@ -507,7 +504,7 @@ paths:
         '500':
           description: Internal server error
 
-  /api/stat/pois/{poiId}/unlike:
+  /api/stat/pois/unlike/{poiId}:
     put:
       tags: [poi-stats]
       summary: Add a dislike to a POI
@@ -535,7 +532,7 @@ paths:
         '500':
           description: Internal server error
 
-  /api/stat/pois/{poiId}/visit:
+  /api/stat/pois/visit/{poiId}:
     put:
       tags: [poi-stats]
       summary: Record a visit to a POI
@@ -562,7 +559,7 @@ paths:
         '500':
           description: Internal server error
 
-  # Events (Planned Features)
+  # pianificato per il futuro mon implementato
   /api/app/events:
     post:
       tags: [events]
