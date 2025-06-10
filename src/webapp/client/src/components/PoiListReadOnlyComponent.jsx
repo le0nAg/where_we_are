@@ -1,15 +1,12 @@
 import React, { useState } from "react";
-import { useDeletePois } from "../hooks/useDeletePois";
 import "../css/poiList.css";
 
-const PoiListComponent = ({
-  pois,
-  onAction,
-  selectedButtonName = "Esegui Azione"
-}) => {
+const PoiListReadOnlyComponent = ({ pois }) => {
   const [selectedPois, setSelectedPois] = useState(new Set());
   const [currentImageIndexes, setCurrentImageIndexes] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const [exportLoading, setExportLoading] = useState(false);
+  const [exportError, setExportError] = useState(null);
 
   const handleCheckboxChange = (poiId) => {
     setSelectedPois((prev) => {
@@ -38,13 +35,32 @@ const PoiListComponent = ({
     });
   };
 
-  const handleAction = async () => {
-    const selectedIds = [...selectedPois];
+  const handleExport = async () => {
+    setExportLoading(true);
+    setExportError(null);
+
+    const selected = pois.filter((poi) => selectedPois.has(poi._id));
+
     try {
-      await onAction(selectedIds);
+      const response = await fetch("/api/export-pois", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pois: selected }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+
+      alert("POIs exported successfully.");
       setSelectedPois(new Set());
     } catch (err) {
-      console.error("Error executing action on POIs:", err);
+      console.error("Export error:", err);
+      setExportError("Failed to export POIs. Please try again.");
+    } finally {
+      setExportLoading(false);
     }
   };
 
@@ -109,23 +125,16 @@ const PoiListComponent = ({
       })}
 
       <button
-        onClick={handleAction}
-        disabled={selectedPois.size === 0}
-        className="delete-button-fixed"
-        style={{
-          backgroundColor: selectedButtonName === "Salva" ? "#4CAF50" : "#f44336",
-          color: "white",
-          padding: "10px 20px",
-          border: "none",
-          borderRadius: "5px",
-          cursor: selectedPois.size > 0 ? "pointer" : "not-allowed",
-        }}
+        onClick={handleExport}
+        disabled={selectedPois.size === 0 || exportLoading}
+        className="export-button-fixed"
       >
-        {`${selectedButtonName} (${selectedPois.size})`}
+        {exportLoading ? "Exporting..." : `Export Selected (${selectedPois.size})`}
       </button>
+
+      {exportError && <div className="error-message">{exportError}</div>}
     </div>
   );
 };
 
-
-export default PoiListComponent;
+export default PoiListReadOnlyComponent;

@@ -1,0 +1,120 @@
+@startuml
+actor Operator
+
+rectangle "POI Management System" {
+	usecase "Create Operator Account" as UC_Create
+}
+
+Operator --> UC_Create : provides username & password
+@enduml
+
+@startuml
+actor Operatore
+
+rectangle "POI Management System" {
+	usecase "Inserisci credenziali" as UC_Login
+	usecase "Verifica credenziali" as UC_Verifica
+	usecase "Blocco account" as UC_Blocco
+}
+
+Operatore --> UC_Login
+UC_Login --> UC_Verifica : «include»
+UC_Login ..> UC_Blocco : «extend»
+
+@enduml
+
+
+@startuml
+actor Operator
+
+participant "Login Page" as Login
+participant "Authentication Service" as Auth
+participant "Database" as DB
+
+Operator -> Login: Enter username and password
+Login -> Auth: Send credentials
+Auth -> DB: Validate credentials
+DB --> Auth: Return validation result
+
+alt Successful login
+	Auth --> Login: Display success message
+else Failed login
+	Auth --> Login: Display error message
+end
+
+@enduml
+
+@startuml
+
+actor "Operator" as Operator
+actor "Ordinary User" as User
+
+rectangle "POI Management System" as System {
+  usecase "Create Operator Account" as UC1
+  usecase "Visualizza mappa" as UC2
+  usecase "Naviga/Zoom mappa" as UC2a
+}
+
+Operator --> UC1 : provides username & password
+Operator --> UC2 : seleziona "Mappa"
+User --> UC2 : seleziona "Mappa"
+
+@enduml
+
+
+@startuml
+actor Operatore
+
+rectangle "Pannello Operatore" {
+	usecase "Visualizza elenco POI" as UC_Elenco
+	usecase "Ordina elenco POI" as UC_Ordina
+	usecase "Ricerca POI" as UC_Ricerca
+}
+
+Operatore --> UC_Elenco
+UC_Elenco <|-- UC_Ordina : «extend»
+UC_Elenco <|-- UC_Ricerca : «extend»
+@enduml
+
+
+@startuml
+!theme plain
+
+actor Operatore
+
+rectangle "Pannello Operatore" {
+  usecase "Aggiungi POI" as UC1
+  usecase "Modifica POI" as UC2
+  usecase "Rimuovi POI" as UC3
+ 
+  usecase "Inserisci POI" as UC4
+  usecase "Aggiorna POI" as UC5
+  usecase "Elimina POI" as UC6
+}
+
+Operatore --> UC1
+Operatore --> UC2
+Operatore --> UC3
+
+UC1 .-> UC4 : <<include>>
+UC2 .-> UC5 : <<include>>
+UC3 .-> UC6 : <<include>>
+
+@enduml
+
+@startuml
+actor Operatore
+
+rectangle "Pannello Operatore" {
+	usecase "Visualizza Statistiche POI" as UC_Stat
+	usecase "Filtra per zona o intervallo\ndi tempo" as UC_Filter
+	usecase "Esporta Statistiche" as UC_Export
+	usecase "Avviso dati assenti\no insufficienti" as UC_NoData
+}
+
+Operatore --> UC_Stat
+UC_Stat .-> UC_Filter : «extend»
+UC_Stat .-> UC_Export : «extend»
+UC_Stat .-> UC_NoData : «exception»
+
+@enduml

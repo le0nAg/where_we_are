@@ -26,7 +26,7 @@ describe("API Endpoints Testing", () => {
       properties: {
         name: "Nuovo POI",
         description: "Descrizione test",
-        category: "place" // Categoria obbligatoria
+        category: "place" 
       }
     };
 

@@ -2,96 +2,58 @@
 import React, { useState } from "react";
 import MapComponent from "../components/MapComponent";
 import { useFetchPois } from "../hooks/useFetchData";
-import { useAuthnContext } from "../hooks/useAuthnContext";
-import { useSavePoi } from "../hooks/useSavePois"; 
-import ItineraryModal from "../components/ItineraryModal"; 
 import "../css/map.css";
+import PoiListComponent from "../components/PoiListComponent";
+import Header from '../components/header';
 
 const MapPage = () => {
   const { data, loading, error } = useFetchPois();
-  const { user, isAuthenticated, isRegularUser } = useAuthnContext();
-  const { savePoi } = useSavePoi();
-  const [showItineraryModal, setShowItineraryModal] = useState(false);
-
-  const handleGoogleLogin = () => {
-    // Redirect to your backend's Google auth route
-    window.location.href = '/auth/google';
-  };
-
-  const handleSavePoi = async (poiId) => {
-    if (isAuthenticated && isRegularUser) {
-      try {
-        await savePoi(poiId);
-        // Show success notification
-      } catch (error) {
-        // Handle error
-        console.error("Failed to save POI:", error);
-      }
-    }
-  };
-
-  const handleItineraryPlanning = () => {
-    setShowItineraryModal(true);
-  };
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
+  //handler per interrogare il backend per il download del KML
+  const downloadKML = async (selectedPois) => {
+    try {
+      console.log(selectedPois);
+      const poiIds = selectedPois.map(poi => poi).join(',');
+      const response = await fetch(`/api/app/download?pois=${poiIds}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to download KML');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'pois.kml';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      alert('Error downloading KML: ' + error.message);
+    }
+  };
+  
   return (
     <div className="map-page">
-      <div className="map-header">
-        {!isAuthenticated ? (
-          <button 
-            className="google-login-button" 
-            onClick={handleGoogleLogin}
-          >
-            <img 
-              src="/images/google-logo.png" 
-              alt="Google logo" 
-              className="google-icon"
-            />
-            Login with Google
+
+      <div className={`poi-sidebar ${sidebarOpen ? "open" : ""}`} onClick={(e) => e.stopPropagation()}>
+        <div className="sidebar-controls">
+          <button className="toggle-sidebar-button" onClick={() => setSidebarOpen(!sidebarOpen)}>
+            ☰
           </button>
-        ) : isRegularUser ? (
-          <div className="user-controls">
-            <div className="user-info">
-              <img 
-                src={user.profilePicture} 
-                alt="Profile" 
-                className="profile-image" 
-              />
-              <span>Welcome, {user.displayName}</span>
-            </div>
-            <div className="action-buttons">
-              <button 
-                className="itinerary-button"
-                onClick={handleItineraryPlanning}
-              >
-                Plan Your Itinerary
-              </button>
-              <a href="/saved-pois" className="saved-pois-link">
-                Your Saved POIs ({user.savedPois?.length || 0})
-              </a>
-            </div>
-          </div>
-        ) : (
-          <div className="operator-notice">
-            <p>You're logged in as an operator. <a href="/poi-management">Manage POIs</a></p>
-          </div>
-        )}
+        </div>
+        <PoiListComponent
+          pois={data}
+          onAction={downloadKML}
+          selectedButtonName="Salva"
+        />
       </div>
 
-      <MapComponent 
-        data={data} 
-        canSavePois={isAuthenticated && isRegularUser}
-        onSavePoi={handleSavePoi}
-      />
+      <MapComponent data={data} />
 
-      {showItineraryModal && (
-        <ItineraryModal 
-          onClose={() => setShowItineraryModal(false)} 
-        />
-      )}
     </div>
   );
 };

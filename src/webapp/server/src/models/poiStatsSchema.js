@@ -6,7 +6,14 @@ const POIStatsSchema = new mongoose.Schema({
     rating: {
       upvotes: { type: Number, default: 0 },
       downvotes: { type: Number, default: 0 }
-    }
+    },
+    ratingMensile: [{
+      year: Number,
+      month: Number, 
+      upvotes: { type: Number, default: 0 },
+      downvotes: { type: Number, default: 0 }
+    }],
+    
   });
   
 const PoiStats = mongoose.model('POIStats', POIStatsSchema);
