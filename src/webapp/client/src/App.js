@@ -20,8 +20,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/map" element={<MapPage />} />
           <Route path="/stats" element={<StatisticalPage />} />
-          
-          {/* TODO: PROTECT THE ROUTE */}
           <Route path="/poi-management" element={<PoiManagementPage />} />
           
         </Routes>
