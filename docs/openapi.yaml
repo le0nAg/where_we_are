@@ -1,11 +1,10 @@
 openapi: 3.1.3
 info:
-  title: Where We Are api
+  title: Where We Are API
   description: |
-    " Questa API fornisce funzionalità per la gestione di punti di interesse (POI) e la raccolta di statistiche sugli accessi e l'interazione degli utenti. Gli endpoint consentono di aggiungere, modificare e rimuovere POI, oltre a ottenere dati analitici aggregati per comprendere meglio il comportamento degli utenti.
+    "Questa API fornisce funzionalità per la gestione di punti di interesse (POI) e la raccolta di statistiche sugli accessi e l'interazione degli utenti. Gli endpoint consentono di aggiungere, modificare e rimuovere POI, oltre a ottenere dati analitici aggregati per comprendere meglio il comportamento degli utenti.
       
-      Qui sono riportate sia le API già sviluppate sia quelle pianificate, leggere pertanto attentamente la documentazione. 
-    "
+      Qui sono riportate sia le API già sviluppate sia quelle pianificate, leggere pertanto attentamente la documentazione."
     
   license:
     name: GPL 3.0
@@ -21,7 +20,7 @@ tags:
   - name: poi
     description: Operations about point of interest
   - name: poi-stats
-    description: POI statistics and analytics (Coming Soon)
+    description: POI statistics and analytics
   - name: events
     description: Event management (Planned Features)
 
@@ -70,8 +69,31 @@ paths:
         '401':
           description: Invalid credentials
 
-  # POI Endpoints
-  /api/app/pois/getAllPois:
+  # User Profile
+  /api/app/user:
+    get:
+      tags: [operator]
+      summary: Get current user profile
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/Operator'
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
+
+  # POI Endpoints (RESTful)
+  /api/app/pois:
     get:
       tags: [poi]
       summary: Get all POIs
@@ -87,8 +109,7 @@ paths:
                   $ref: '#/components/schemas/Poi'
         '404':
           description: No POIs found
-  
-  /api/app/pois/addPoi:  
+    
     post:
       tags: [poi]
       summary: Create a new POI
@@ -108,10 +129,34 @@ paths:
         '400':
           description: Invalid input
 
+    delete:
+      tags: [poi]
+      summary: Delete multiple POIs
+      operationId: deletePois
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ids]
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '204':
+          description: POIs deleted
+        '400':
+          description: Invalid or empty ID array
+        '404':
+          description: No POIs found with given IDs
+
   /api/app/pois/{poiId}:
     get:
       tags: [poi]
       summary: Get a POI by ID
+      operationId: getPoiById
       parameters:
         - name: poiId
           in: path
@@ -130,6 +175,7 @@ paths:
     put:
       tags: [poi]
       summary: Update a POI
+      operationId: updatePoi
       parameters:
         - name: poiId
           in: path
@@ -139,7 +185,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Poi'
+              type: object
+              properties:
+                properties:
+                  type: object
+                  properties:
+                    name: { type: string }
+                    description: { type: string }
+                name: { type: string }
+                description: { type: string }
       responses:
         '200':
           description: Updated POI
@@ -149,46 +203,30 @@ paths:
                 $ref: '#/components/schemas/Poi'
         '404':
           description: POI not found
-
-    delete:
-      tags: [poi]
-      summary: Delete a POI
-      parameters:
-        - name: poiId
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        '204':
-          description: POI deleted
-        '404':
-          description: POI not found
-
-  /api/app/deletePois:
-    delete:
-      tags: [poi]
-      summary: Delete multiple POIs
-      responses:
-        '204':
-          description: POIs deleted
         '400':
           description: Invalid input
 
-  /api/app/upload-images:
+  # POI Images
+  /api/app/images:
     post:
       tags: [poi]
-      summary: Upload images
+      summary: Upload images for a POI
+      operationId: uploadImages
       requestBody:
         content:
           multipart/form-data:
             schema:
               type: object
+              required: [files, poiId]
               properties:
-                images: 
+                files: 
                   type: array
                   items: 
                     type: string
                     format: binary
+                poiId:
+                  type: string
+                  description: ID of the POI to attach images to
       responses:
         '201':
           description: Images uploaded
@@ -200,21 +238,354 @@ paths:
                   imageUrls: 
                     type: array
                     items: { type: string }
+        '400':
+          description: No images uploaded
+        '404':
+          description: POI not found
+        '500':
+          description: Image upload failed
 
-  # POI Statistics (Coming Soon)
-  /api/app/poi-stats/{poiId}:
+  /api/app/images/{imageUrl}:
+    delete:
+      tags: [poi]
+      summary: Delete an image from a POI
+      operationId: deleteImage
+      parameters:
+        - name: imageUrl
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [poiId]
+              properties:
+                poiId:
+                  type: string
+                  description: ID of the POI to remove image from
+      responses:
+        '204':
+          description: Image deleted
+        '404':
+          description: POI not found
+        '500':
+          description: Failed to delete image
+
+  # POI Export
+  /api/app/download:
+    get:
+      tags: [poi]
+      summary: Export POIs as KML
+      operationId: exportPoisKML
+      parameters:
+        - name: pois
+          in: query
+          required: true
+          schema:
+            type: string
+            description: Comma-separated list of POI IDs
+      responses:
+        '200':
+          description: KML file with POIs
+          content:
+            application/vnd.google-earth.kml+xml:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                example: 'attachment; filename="pois.kml"'
+        '400':
+          description: Missing 'pois' parameter
+        '404':
+          description: No POIs found
+        '500':
+          description: Failed to generate KML
+
+  # POI Statistics - General
+  /api/stat/stats:
     get:
       tags: [poi-stats]
-      summary: Get POI statistics
-      description: Coming Soon - Endpoint under development
+      summary: Get all POI statistics
+      operationId: getAllPoiStats
+      responses:
+        '200':
+          description: All POI statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PoiStats'
+
+  /api/stat/summary:
+    get:
+      tags: [poi-stats]
+      summary: Get statistics summary
+      operationId: getStatsSummary
+      responses:
+        '200':
+          description: Statistics summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalPois: { type: integer }
+                  totalVisits: { type: integer }
+                  totalUpvotes: { type: integer }
+                  totalDownvotes: { type: integer }
+
+  /api/stat/bulk:
+    get:
+      tags: [poi-stats]
+      summary: Get bulk POI statistics
+      operationId: getBulkPoiStats
+      responses:
+        '200':
+          description: Bulk POI statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PoiStats'
+
+  /api/stat/recent:
+    get:
+      tags: [poi-stats]
+      summary: Get recent activity
+      operationId: getRecentActivity
+      responses:
+        '200':
+          description: Recent activity data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    poiId: { type: string }
+                    activity: { type: string }
+                    timestamp: { type: string, format: date-time }
+
+  # POI Statistics - Specific POI
+  /api/stat/poi/{poiId}:
+    get:
+      tags: [poi-stats]
+      summary: Get statistics for a specific POI
+      operationId: getPoiStats
       parameters:
         - name: poiId
           in: path
           required: true
           schema: { type: string }
       responses:
-        '501':
-          description: Not implemented yet
+        '200':
+          description: POI statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PoiStats'
+        '404':
+          description: POI not found
+
+  # POI Analytics
+  /api/stat/visits:
+    get:
+      tags: [poi-stats]
+      summary: Get visit analytics
+      operationId: getVisitAnalytics
+      responses:
+        '200':
+          description: Visit analytics data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalVisits: { type: integer }
+                  visitsThisMonth: { type: integer }
+                  dailyVisits: 
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        date: { type: string, format: date }
+                        count: { type: integer }
+
+  /api/stat/ratings:
+    get:
+      tags: [poi-stats]
+      summary: Get rating analytics
+      operationId: getRatingAnalytics
+      responses:
+        '200':
+          description: Rating analytics data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalUpvotes: { type: integer }
+                  totalDownvotes: { type: integer }
+                  averageRating: { type: number }
+                  ratingDistribution:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        poiId: { type: string }
+                        upvotes: { type: integer }
+                        downvotes: { type: integer }
+
+  /api/stat/top:
+    get:
+      tags: [poi-stats]
+      summary: Get top-performing POIs
+      operationId: getTopPois
+      responses:
+        '200':
+          description: Top POIs by various metrics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mostVisited:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        poiId: { type: string }
+                        visits: { type: integer }
+                  highestRated:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        poiId: { type: string }
+                        upvotes: { type: integer }
+                        downvotes: { type: integer }
+
+  /api/stat/compare:
+    get:
+      tags: [poi-stats]
+      summary: Compare POI statistics
+      operationId: comparePoiStats
+      parameters:
+        - name: poiIds
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+      responses:
+        '200':
+          description: Comparison of POI statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    poiId: { type: string }
+                    visits: { type: integer }
+                    upvotes: { type: integer }
+                    downvotes: { type: integer }
+
+  # POI Interactions
+  /api/stat/pois/{poiId}/like:
+    put:
+      tags: [poi-stats]
+      summary: Add a like to a POI
+      operationId: likePoi
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Like added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      poiId: { type: string }
+                      upvotes: { type: integer }
+                      downvotes: { type: integer }
+        '500':
+          description: Internal server error
+
+  /api/stat/pois/{poiId}/unlike:
+    put:
+      tags: [poi-stats]
+      summary: Add a dislike to a POI
+      operationId: unlikePoi
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Dislike added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      poiId: { type: string }
+                      upvotes: { type: integer }
+                      downvotes: { type: integer }
+        '500':
+          description: Internal server error
+
+  /api/stat/pois/{poiId}/visit:
+    put:
+      tags: [poi-stats]
+      summary: Record a visit to a POI
+      operationId: recordVisit
+      parameters:
+        - name: poiId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Visit recorded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      poiId: { type: string }
+                      totalVisits: { type: integer }
+        '500':
+          description: Internal server error
 
   # Events (Planned Features)
   /api/app/events:
@@ -232,16 +603,27 @@ paths:
           description: Not implemented yet
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     Operator:
       type: object
       required: [email, username, password]
       properties:
+        _id:
+          type: string
+          readOnly: true
         email: 
           type: string
           format: email
         username: { type: string }
-        password: { type: string }
+        password: 
+          type: string
+          writeOnly: true
         createdAt: 
           type: string
           format: date-time
@@ -251,6 +633,9 @@ components:
       type: object
       required: [geometry, properties]
       properties:
+        _id:
+          type: string
+          readOnly: true
         type: 
           type: string
           enum: [Feature]
@@ -264,10 +649,7 @@ components:
               enum: [Polygon]
             coordinates: 
               type: array
-              items: 
-                type: array
-                items: 
-                  type: number
+              description: Array of coordinate arrays for polygon
         properties:
           type: object
           required: [name, category]
@@ -277,7 +659,11 @@ components:
             images: 
               type: array
               items: { type: string }
-            osmTags: { type: object }
+              description: Array of image identifiers
+            osmTags: 
+              type: object
+              description: OSM tags (key-value pairs)
+              additionalProperties: true
             category: 
               type: string
               enum: [street, place, area, other]
@@ -285,9 +671,12 @@ components:
     PoiStats:
       type: object
       properties:
+        _id:
+          type: string
+          readOnly: true
         poiId: 
           type: string
-          description: Reference to POI
+          description: Reference to POI ObjectId
         visits:
           type: array
           items:
@@ -296,6 +685,7 @@ components:
               timestamp: 
                 type: string
                 format: date-time
+                description: Visit timestamp, defaults to current time
         rating:
           type: object
           properties:
@@ -307,10 +697,22 @@ components:
               type: integer 
               minimum: 0
               default: 0
+        ratingMensile:
+          type: array
+          items:
+            type: object
+            properties:
+              year: { type: integer }
+              month: { type: integer, minimum: 1, maximum: 12 }
+              upvotes: { type: integer, minimum: 0, default: 0 }
+              downvotes: { type: integer, minimum: 0, default: 0 }
 
     Event:
       type: object
       properties:
+        _id:
+          type: string
+          readOnly: true
         title: { type: string }
         description: { type: string }
         startDate: 
