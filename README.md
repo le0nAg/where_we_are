@@ -1,4 +1,4 @@
-# Where We Are 🚀
+# Where We Are 
 
 Benvenuto nel repository di **Where We Are**, un pannello operatore dedicato alla gestione dei luoghi di interesse della città di Trento! 🏛️🌍 Questo progetto fa parte di un mix tra un'esame universitario (Ingegneria del software) e un'iniziativa per la creazione di un sistema turistico interattivo, pensato per migliorare l'esperienza degli utenti nell'esplorazione della città con l'ambizione di scalare anche su altre realtà. 
 
@@ -27,23 +27,23 @@ LICENSE    ➝ Informazioni sulla licenza del software
 
 ---
 
-## ⚙Istruzioni per l'esecuzione in locale
+## Istruzioni per l'esecuzione in locale
 
 Per eseguire il progetto in locale, segui questi passaggi:
 
-### 📡 Avvio del Server:
+### Avvio del Server:
 ```sh
 cd where_we_are/src/webapp/server/
 npm start
 ```
 
-### 💻 Avvio del Client:
+### Avvio del Client:
 ```sh
 cd where_we_are/src/webapp/client/
 npm start
 ```
 
-###  Attenzione sull'upload delle immagini
+### Attenzione sull'upload delle immagini
 
 Si segnala che l'upload di immagini potrebbe presentare problemi, poiché il server è configurato per salvare i file nella directory `/uploads` della macchina locale su cui è in esecuzione. Tuttavia, non è possibile garantire automaticamente la corretta configurazione dei permessi delle cartelle sul sistema dell'utente. Si consiglia di verificare e, se necessario, modificare i permessi della cartella di destinazione per evitare errori durante il caricamento.
 
