@@ -297,11 +297,11 @@ paths:
   /api/stat/summary:
     get:
       tags: [poi-stats]
-      summary: Get statistics summary
+      summary: Get statistics summary of stats (da usare solo per debug)
       operationId: getStatsSummary
       responses:
         '200':
-          description: Statistics summary
+          description: un sommario delle statistiche dei POI
           content:
             application/json:
               schema:
@@ -334,7 +334,7 @@ paths:
       operationId: getRecentActivity
       responses:
         '200':
-          description: Recent activity data
+          description: Poi of last 24hrs
           content:
             application/json:
               schema:
@@ -359,7 +359,7 @@ paths:
           schema: { type: string }
       responses:
         '200':
-          description: POI statistics
+          description: statistiche per il poi specificato
           content:
             application/json:
               schema:
@@ -367,7 +367,7 @@ paths:
         '404':
           description: POI not found
 
-  # POI Analytics
+
   /api/stat/visits:
     get:
       tags: [poi-stats]
