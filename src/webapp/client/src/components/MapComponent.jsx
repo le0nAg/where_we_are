@@ -29,7 +29,7 @@ const MapComponent = ({ data }) => {
     }));
     const poiId = data[areaIndex]._id;
     const baseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001';
-
+    console.log(`Feedback for area ${areaIndex}: ${type} (POI ID: ${poiId})`);
     if(type === "dislike"){
       fetch(`${baseUrl}/api/stat/unlike/${poiId}`, {
       method: 'PUT',
@@ -38,6 +38,7 @@ const MapComponent = ({ data }) => {
       },
       }).catch(error => console.error('Error:', error));
     }else if(type === "like"){
+      console.log(`${baseUrl}/api/stat/like/${poiId}`);
       fetch(`${baseUrl}/api/stat/like/${poiId}`, {
       method: 'PUT',
       headers: {
@@ -47,7 +48,7 @@ const MapComponent = ({ data }) => {
     }
 
 
-    alert(`Feedback for area ${areaIndex}: ${type}`);
+    // alert(`Feedback for area ${areaIndex}: ${type}`);
   };
 
   return (

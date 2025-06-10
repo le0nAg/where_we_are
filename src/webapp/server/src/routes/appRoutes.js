@@ -198,6 +198,7 @@ router.get(`${API_PREFIX_STAT}/recent`, poiStatsController.getRecentActivity);
 // aggiungo un like al poi
 router.put(`${API_PREFIX_STAT}/like/:poid`, async (req, res) => {
   try {
+    console.log("like request received");
     const { poid } = req.params;
     const now = new Date();
     const year = now.getFullYear();
