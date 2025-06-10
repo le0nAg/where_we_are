@@ -114,4 +114,124 @@ describe("API Endpoints Testing", () => {
     const res = await request.post("/api/authn/logout").set("Authorization", validToken);
     expect(res.status).toBe(200);
   });
+
+  //aggiunta di un POI valido per testare il stats
+  test("Aggiunta di un POI valido", async () => {
+    const newPoi = {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates: [[[0, 0], [1, 1], [1, 0], [0, 0]]] // Esempio di poligono chiuso
+      },
+      properties: {
+        name: "Nuovo POI",
+        description: "Descrizione test",
+        category: "place" 
+      }
+    };
+
+    const res = await request.post("/api/app/addPoi").send(newPoi);
+    testingPoi = res.body;
+    expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty("_id");
+  });
+
+  test("Like di un POI", async () => {
+    const res = await request.put(`/api/stat/like/${testingPoi._id}`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Like di un POI non esistente", async () => {
+    const res = await request.put(`/api/stat/like/0`);
+    expect(res.status).toBe(404);
+  });
+
+  test("Unlike di un POI", async () => {
+    const res = await request.put(`/api/stat/unlike/${testingPoi._id}`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Unlike di un POI non esistente", async () => {
+    const res = await request.put(`/api/stat/unlike/0`);
+    expect(res.status).toBe(404);
+  });
+
+  test("Visita di un POI", async () => {
+    const res = await request.put(`/api/stat/visit/${testingPoi._id}`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Visita di un POI non esistente", async () => {
+    const res = await request.put(`/api/stat/visit/0`);
+    expect(res.status).toBe(404);
+  });
+
+  test("Download KML con POI selezionati", async () => {
+    const poiIds = [testingPoi._id];
+    const res = await request.get(`/api/app/download?pois=${poiIds.join(',')}`);
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toBe('application/vnd.google-earth.kml+xml');
+  });
+
+  test("Download KML con POI selezionati non validi", async () => {
+    const res = await request.get(`/api/app/download?pois=0`);
+    expect(res.status).toBe(500);
+  });
+
+  test("Recupero statistiche", async () => {
+    const res = await request.get(`/api/stat/stats`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Recupero statistiche in ordine decrescente", async () => {
+    const res = await request.get(`/api/stat/stats?order=desc`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Recupero statistiche in ordine crescente esplicito", async () => {
+    const res = await request.get(`/api/stat/stats?order=asc`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Recupero statistiche in ordine non valido", async () => {
+    const res = await request.get(`/api/stat/stats?order=x`);
+    expect(res.status).toBe(200); //TODO: verificare che ritorni comunque le statistiche, ma in ordine crescente
+  });
+
+  test("Recupero statistiche sum-up [debug endpoint]", async () => {
+    const res = await request.get(`/api/stat/summary`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Recupero visite (solo)", async () => {
+    const res = await request.get(`/api/stat/visits`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Recupero ratings (solo)", async () => {
+    const res = await request.get(`/api/stat/ratings`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Recupero tutte le statistiche recenti (<24h)", async () => {
+    const res = await request.get(`/api/stat/recent`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Recupero informazioni di un POI specifco", async () => {
+    const res = await request.get(`/api/stat/poi/${testingPoi._id}`);
+    expect(res.status).toBe(200);
+  });
+
+  test("Recupero informazioni di un POI specifco non esistente", async () => {
+    const res = await request.get(`/api/stat/poi/0`);
+    expect(res.status).toBe(400);
+  });
+
+  test("Eliminazione POI con richiesta valida", async () => {
+    const poiId = testingPoi._id;
+    const res = await request.delete("/api/app/deletePois").send({ ids: [poiId] });
+    expect(res.status).toBe(204);
+  });
+  
 });
